@@ -83,7 +83,7 @@ exports.createHallsUploadFile = asyncHandler(async (req, res) => {
   );
 
   const mediaPath =
-    process.env.HALL_FILE_UPLOADED_DIR + req.params.id + "/" + file.name;
+    process.env.HALL_FILE_UPLOADED_DIR + req.params.id + file.name;
 
   const mediaLibrary = await req.db.mediaLibrary.create({
     mediaPath: mediaPath,

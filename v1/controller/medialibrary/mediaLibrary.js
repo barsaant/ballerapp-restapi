@@ -137,7 +137,7 @@ exports.deleteUploadFile = asyncHandler(async (req, res) => {
     throw new ErrorMsg(`${req.params.id}-тай файл байхгүй байна`, 400);
   }
 
-  var path = process.env.FILE_UPLOADED_DIR + "/" + mediaLibrary.mediaPath;
+  var path = process.env.FILE_UPLOADED_DIR + mediaLibrary.mediaPath;
 
   fs.unlink(path, (err) => {
     if (err) {

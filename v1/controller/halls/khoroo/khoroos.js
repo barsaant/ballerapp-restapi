@@ -111,7 +111,7 @@ exports.deleteKhoroo = asyncHandler(async (req, res) => {
   let khoroo = await req.db.khoroo.findByPk(req.params.id);
 
   if (req.params.id == 1) {
-    throw new ErrorMsg(`${req.params.id} ID-тай хороог устгах боломжгүй{!`);
+    throw new ErrorMsg(`${req.params.id} ID-тай хороог устгах боломжгүй!`);
   }
 
   let sportHalls = await req.db.sportHall.findAll({
