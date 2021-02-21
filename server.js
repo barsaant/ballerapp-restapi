@@ -95,7 +95,7 @@ db.district.hasMany(db.khoroo, {
 });
 
 db.sequelize
-  .sync()
+  .sync({ force: true })
   .then((result) => {
     console.log("");
   })
