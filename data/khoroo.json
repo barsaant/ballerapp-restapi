@@ -1,0 +1,93 @@
+[
+  {
+    "khorooId": 1,
+    "khorooName": "Тодорхойгүй",
+    "districtId": 1,
+    "createdAt": "2021-02-19T01:33:40.000Z",
+    "updatedAt": "2021-02-19T01:33:40.000Z"
+  },
+  {
+    "khorooId": 2,
+    "khorooName": "1-р хороо",
+    "districtId": 2,
+    "createdAt": "2021-02-19T01:33:40.000Z",
+    "updatedAt": "2021-02-19T01:33:40.000Z"
+  },
+  {
+    "khorooId": 3,
+    "khorooName": "2-р хороо",
+    "districtId": 2,
+    "createdAt": "2021-02-19T01:33:44.000Z",
+    "updatedAt": "2021-02-19T01:33:44.000Z"
+  },
+  {
+    "khorooId": 4,
+    "khorooName": "3-р хороо",
+    "districtId": 2,
+    "createdAt": "2021-02-19T01:33:47.000Z",
+    "updatedAt": "2021-02-19T01:33:47.000Z"
+  },
+  {
+    "khorooId": 5,
+    "khorooName": "4-р хороо",
+    "districtId": 2,
+    "createdAt": "2021-02-19T01:33:51.000Z",
+    "updatedAt": "2021-02-19T01:33:51.000Z"
+  },
+  {
+    "khorooId": 6,
+    "khorooName": "5-р хороо",
+    "districtId": 2,
+    "createdAt": "2021-02-19T01:33:54.000Z",
+    "updatedAt": "2021-02-19T01:33:54.000Z"
+  },
+  {
+    "khorooId": 7,
+    "khorooName": "6-р хороо",
+    "districtId": 2,
+    "createdAt": "2021-02-19T01:33:57.000Z",
+    "updatedAt": "2021-02-19T01:33:57.000Z"
+  },
+  {
+    "khorooId": 8,
+    "khorooName": "7-р хороо",
+    "districtId": 2,
+    "createdAt": "2021-02-19T01:34:01.000Z",
+    "updatedAt": "2021-02-19T01:34:01.000Z"
+  },
+  {
+    "khorooId": 9,
+    "khorooName": "8-р хороо",
+    "districtId": 2,
+    "createdAt": "2021-02-19T01:34:05.000Z",
+    "updatedAt": "2021-02-19T01:34:05.000Z"
+  },
+  {
+    "khorooId": 10,
+    "khorooName": "9-р хороо",
+    "districtId": 2,
+    "createdAt": "2021-02-19T01:34:10.000Z",
+    "updatedAt": "2021-02-19T01:34:10.000Z"
+  },
+  {
+    "khorooId": 11,
+    "khorooName": "10-р хороо",
+    "districtId": 2,
+    "createdAt": "2021-02-19T01:34:14.000Z",
+    "updatedAt": "2021-02-19T01:34:14.000Z"
+  },
+  {
+    "khorooId": 12,
+    "khorooName": "11-р хороо",
+    "districtId": 2,
+    "createdAt": "2021-02-19T02:27:52.000Z",
+    "updatedAt": "2021-02-19T02:27:52.000Z"
+  },
+  {
+    "khorooId": 13,
+    "khorooName": "12-р хороо",
+    "districtId": 2,
+    "createdAt": "2021-02-19T02:27:55.000Z",
+    "updatedAt": "2021-02-19T02:27:55.000Z"
+  }
+]
