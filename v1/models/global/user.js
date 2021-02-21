@@ -28,15 +28,6 @@ module.exports = function (sequelize, DataTypes) {
         allowNull: false,
         unique: "email",
       },
-      phoneIntCode: {
-        type: DataTypes.STRING(),
-        allowNull: true,
-      },
-      phone: {
-        type: DataTypes.STRING("8"),
-        allowNull: true,
-        unique: true,
-      },
       role: {
         type: DataTypes.ENUM(
           "user",
@@ -47,6 +38,15 @@ module.exports = function (sequelize, DataTypes) {
         ),
         allowNull: false,
         defaultValue: "user",
+      },
+      phoneIntCode: {
+        type: DataTypes.STRING(),
+        allowNull: true,
+      },
+      phone: {
+        type: DataTypes.STRING("8"),
+        allowNull: true,
+        unique: true,
       },
       emailVerified: {
         type: DataTypes.ENUM("true", "false"),
