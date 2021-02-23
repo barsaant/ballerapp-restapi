@@ -49,11 +49,23 @@ exports.getKhorooSportHalls = asyncHandler(async (req, res) => {
   if (!khoroo) {
     throw new ErrorMsg(req.params.id + " ID-тай хороо байхгүй байна.", 404);
   }
+
+  const allSportHalls = await khoroo.getSportHalls();
+
+  let count;
+  let pages;
+  for (var i = 0; i < allSportHalls.length; i++) {
+    count = i + 1;
+    pages = Math.ceil((i + 1) / limit);
+  }
+
   const sportHalls = await khoroo.getSportHalls(query);
 
   res.status(200).json({
     success: true,
     message: "Амжилттай",
+    count,
+    pages,
     khoroo: {
       khorooId,
       khorooName,

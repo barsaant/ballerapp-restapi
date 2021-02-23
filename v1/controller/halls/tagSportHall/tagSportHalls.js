@@ -37,10 +37,20 @@ exports.getTagSportHalls = asyncHandler(async (req, res) => {
       ]);
   }
 
+  const allTags = await req.db.tagSportHall.findAll();
+  let count;
+  let pages;
+  for (var i = 0; i < allTags.length; i++) {
+    count = i + 1;
+    pages = Math.ceil((i + 1) / limit);
+  }
+
   const tags = await req.db.tagSportHall.findAll(query);
 
   res.status(200).json({
     success: true,
+    count,
+    pages,
     message: "Амжилттай",
     tags,
   });
@@ -94,11 +104,22 @@ exports.getTagSportHall = asyncHandler(async (req, res) => {
 
   const { tagId, tagName, createdAt, updatedAt } = tagSportHall;
 
+  const allSportHalls = await tagSportHall.getSportHalls();
+
+  let count;
+  let pages;
+  for (var i = 0; i < allSportHalls.length; i++) {
+    count = i + 1;
+    pages = Math.ceil((i + 1) / limit);
+  }
+
   const sportHalls = await tagSportHall.getSportHalls(query);
 
   res.status(200).json({
     success: true,
     message: "Амжилттай",
+    count,
+    pages,
     tagSportHall: {
       tagId,
       tagName,

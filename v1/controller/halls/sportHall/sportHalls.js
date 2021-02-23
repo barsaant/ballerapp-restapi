@@ -53,10 +53,20 @@ exports.getSportHalls = asyncHandler(async (req, res) => {
       ]);
   }
 
+  const allSportHalls = await req.db.sportHall.findAll();
+  let count;
+  let pages;
+  for (var i = 0; i < allSportHalls.length; i++) {
+    count = i + 1;
+    pages = Math.ceil((i + 1) / limit);
+  }
+
   const sportHalls = await req.db.sportHall.findAll(query);
 
   res.status(200).json({
     success: true,
+    coutn,
+    pages,
     message: "Амжилттай",
     sportHalls,
   });

@@ -42,12 +42,22 @@ exports.getDistrictKhoroos = asyncHandler(async (req, res) => {
   if (!district) {
     throw new ErrorMsg(req.params.id + " ID-тай ангилал байхгүй байна.", 404);
   }
-  console.log(district);
+
+  const allKhoroos = await district.getKhoroos();
+  let count;
+  let pages;
+  for (var i = 0; i < allKhoroos.length; i++) {
+    count = i + 1;
+    pages = Math.ceil((i + 1) / limit);
+  }
+
   const khoroos = await district.getKhoroos(query);
 
   res.status(200).json({
     success: true,
     message: "Амжилттай",
+    count,
+    pages,
     district: { districtId, districtName, createdAt, updatedAt, khoroos },
   });
 });

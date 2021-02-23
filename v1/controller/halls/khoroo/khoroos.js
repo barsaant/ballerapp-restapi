@@ -36,11 +36,21 @@ exports.getKhoroos = asyncHandler(async (req, res) => {
       ]);
   }
 
+  const allKhoroos = await req.db.khoroo.findAll();
+  let count;
+  let pages;
+  for (var i = 0; i < allKhoroos.length; i++) {
+    count = i + 1;
+    pages = Math.ceil((i + 1) / limit);
+  }
+
   const khoroos = await req.db.khoroo.findAll(query);
 
   res.status(200).json({
     success: true,
     message: "Амжилттай",
+    count,
+    pages,
     khoroos,
   });
 });

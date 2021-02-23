@@ -36,12 +36,22 @@ exports.getDistricts = asyncHandler(async (req, res) => {
         el.charAt(0) === "-" ? "DESC" : "ASC",
       ]);
   }
+  const allDistrict = await req.db.district.findAll();
+  let count;
+  let pages;
+  for (var i = 0; i < allDistrict.length; i++) {
+    count = i + 1;
+    pages = Math.ceil((i + 1) / limit);
+  }
 
+  console.log(count);
   const districts = await req.db.district.findAll(query);
 
   res.status(200).json({
     success: true,
     message: "Амжилттай",
+    count,
+    pages,
     districts,
   });
 });
@@ -85,7 +95,13 @@ exports.updateDistrict = asyncHandler(async (req, res) => {
   if (!district) {
     throw new ErrorMsg(`${req.params.id} ID-тай дүүрэг байхгүй байна!`);
   }
+
   const { districtName } = req.body;
+
+  if (!districtName) {
+    throw new ErrorMsg(`Дүүргийн нэрийг оруулна уу`, 400);
+  }
+
   const districtNameCheck = await req.db.district.findOne({
     where: { districtName: districtName },
   });
@@ -106,10 +122,13 @@ exports.updateDistrict = asyncHandler(async (req, res) => {
 exports.deleteDistrict = asyncHandler(async (req, res) => {
   let district = await req.db.district.findByPk(req.params.id);
   if (req.params.id == 1) {
-    throw new ErrorMsg(`${req.params.id} ID-тай дүүргийг устгах боломжгүй!`);
+    throw new ErrorMsg(
+      `${req.params.id} ID-тай дүүргийг устгах боломжгүй!`,
+      400
+    );
   }
   if (!district) {
-    throw new ErrorMsg(`${req.params.id}-ID тай дүүрэг байхгүй байна!`);
+    throw new ErrorMsg(`${req.params.id}-ID тай дүүрэг байхгүй байна!`, 400);
   }
 
   let sportHalls = await req.db.sportHall.findAll({

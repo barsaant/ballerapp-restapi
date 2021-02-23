@@ -50,11 +50,21 @@ exports.getDistrictSportHalls = asyncHandler(async (req, res) => {
     throw new ErrorMsg(req.params.id + " ID-тай дүүрэг байхгүй байна.", 404);
   }
 
+  const allSportHalls = await district.getSportHalls();
+  let count;
+  let pages;
+  for (var i = 0; i < allSportHalls.length; i++) {
+    count = i + 1;
+    pages = Math.ceil((i + 1) / limit);
+  }
+
   const sportHalls = await district.getSportHalls(query);
 
   res.status(200).json({
     success: true,
     message: "Амжилттай",
+    count,
+    pages,
     district: {
       districtId,
       districtName,
