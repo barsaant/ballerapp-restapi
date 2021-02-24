@@ -22,6 +22,7 @@ exports.getPostedSportHalls = asyncHandler(async (req, res) => {
   let query = {
     offset: pagination.start - 1,
     limit,
+    order: [["hallId", "DESC"]],
     include: [
       {
         model: db.tagSportHall,
@@ -30,15 +31,23 @@ exports.getPostedSportHalls = asyncHandler(async (req, res) => {
       },
     ],
   };
-
-  if (req.query) {
-    query.where = {
+  let where;
+  if (search) {
+    where = {
       [Op.and]: [
-        { status: "deleted" },
+        { status: "posted" },
         { title: { [Op.like]: `%${req.query.search}%` } },
         req.query.select,
       ],
     };
+  } else {
+    where = {
+      [Op.and]: [{ status: "posted" }, req.query],
+    };
+  }
+
+  if (req.query) {
+    query.where = where;
   }
 
   if (select) {
@@ -55,10 +64,11 @@ exports.getPostedSportHalls = asyncHandler(async (req, res) => {
   }
 
   const allSportHalls = await req.db.sportHall.findAll({
-    where: { status: "posted" },
+    where,
   });
   let count;
   let pages;
+
   for (var i = 0; i < allSportHalls.length; i++) {
     count = i + 1;
     pages = Math.ceil((i + 1) / limit);

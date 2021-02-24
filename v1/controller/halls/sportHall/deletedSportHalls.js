@@ -22,6 +22,7 @@ exports.getDeletedSportHalls = asyncHandler(async (req, res) => {
   let query = {
     offset: pagination.start - 1,
     limit,
+    order: [["hallId", "DESC"]],
     include: [
       {
         model: db.tagSportHall,
@@ -30,19 +31,23 @@ exports.getDeletedSportHalls = asyncHandler(async (req, res) => {
       },
     ],
   };
-
-  if (req.query) {
-    query.where = {
+  let where;
+  if (search) {
+    where = {
       [Op.and]: [
         { status: "deleted" },
         { title: { [Op.like]: `%${req.query.search}%` } },
         req.query.select,
       ],
     };
+  } else {
+    where = {
+      [Op.and]: [{ status: "deleted" }, req.query],
+    };
   }
 
   if (req.query) {
-    query.where = req.query;
+    query.where = where;
   }
 
   if (select) {
@@ -58,9 +63,7 @@ exports.getDeletedSportHalls = asyncHandler(async (req, res) => {
       ]);
   }
 
-  const allSportHalls = await req.db.sportHall.findAll({
-    where: { status: "deleted" },
-  });
+  const allSportHalls = await req.db.sportHall.findAll({ where });
   let count;
   let pages;
   for (var i = 0; i < allSportHalls.length; i++) {

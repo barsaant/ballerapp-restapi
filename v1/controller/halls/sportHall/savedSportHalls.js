@@ -2,6 +2,9 @@ const Sequelize = require("sequelize");
 const db = require("../../../../config/db-mysql");
 const asyncHandler = require("../../../middleware/asyncHandler");
 const paginate = require("../../../utils/paginate");
+const {
+  getHallsUploadFiles,
+} = require("../../medialibrary/mediaLibrarySportHalls");
 
 const Op = Sequelize.Op;
 
@@ -19,9 +22,11 @@ exports.getSavedSportHalls = asyncHandler(async (req, res) => {
 
   const pagination = await paginate(page, limit, req.db.sportHall);
 
+  console.log(sort);
   let query = {
     offset: pagination.start - 1,
     limit,
+    order: [["hallId", "DESC"]],
     include: [
       {
         model: db.tagSportHall,
@@ -30,17 +35,23 @@ exports.getSavedSportHalls = asyncHandler(async (req, res) => {
       },
     ],
   };
-
-  console.log(search);
-
-  if (req.query.search) {
-    query.where = {
+  let where;
+  if (search) {
+    where = {
       [Op.and]: [
         { status: "saved" },
         { title: { [Op.like]: `%${req.query.search}%` } },
         req.query.select,
       ],
     };
+  } else {
+    where = {
+      [Op.and]: [{ status: "saved" }, req.query],
+    };
+  }
+
+  if (req.query) {
+    query.where = where;
   }
 
   if (select) {
@@ -56,9 +67,7 @@ exports.getSavedSportHalls = asyncHandler(async (req, res) => {
       ]);
   }
 
-  const allSportHalls = await req.db.sportHall.findAll({
-    where: { status: "posted" },
-  });
+  const allSportHalls = await req.db.sportHall.findAll({ where });
   let count;
   let pages;
   for (var i = 0; i < allSportHalls.length; i++) {
