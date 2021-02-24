@@ -65,7 +65,6 @@ exports.updateUserStaff = asyncHandler(async (req, res) => {
     await req.db.user.updatePassword(password);
   }
 
-
   await user.update(req.body);
 
   res.status(200).json({
@@ -81,6 +80,9 @@ exports.deleteUserStaff = asyncHandler(async (req, res) => {
   if (!user) {
     throw new ErrorMsg(`${req.params.id} ID-тай хэрэглэгч байхгүй байна.`);
   }
+
+  await req.db.favoriteSportHall.destroy({ where: { userId: req.params.id } });
+  await req.db.rateSportHall.destroy({ where: { userId: req.params.id } });
 
   await req.db.user.destroy();
   res.status(200).json({

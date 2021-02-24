@@ -128,7 +128,7 @@ exports.deleteDistrict = asyncHandler(async (req, res) => {
     );
   }
   if (!district) {
-    throw new ErrorMsg(`${req.params.id}-ID тай дүүрэг байхгүй байна!`, 400);
+    throw new ErrorMsg(`${req.params.id}-ID тай дүүрэг байхгүй байна!`, 404);
   }
 
   let sportHalls = await req.db.sportHall.findAll({

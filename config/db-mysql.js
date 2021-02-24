@@ -32,6 +32,7 @@ const models = [
   require("../v1/models/sporthalls/tagSportHall"),
   require("../v1/models/sporthalls/sportHalls_tag"),
   require("../v1/models/sporthalls/favoriteSportHall"),
+  require("../v1/models/sporthalls/rateSportHall"),
   require("../v1/models/sporthalls/mediaLibrary_sportHalls"),
 ];
 

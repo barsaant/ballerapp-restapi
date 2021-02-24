@@ -139,8 +139,6 @@ exports.emailVerify = asyncHandler(async (req, res) => {
     throw new ErrorMsg("Баталгаауулах код оруулна уу", 400);
   }
 
-  console.log(verificationCode);
-
   if (verificationCode !== user.emailVerificationCode) {
     throw new ErrorMsg("Баталгаажуулах код буруу байна!", 400);
   }
@@ -170,7 +168,7 @@ exports.emailVerify = asyncHandler(async (req, res) => {
   });
 });
 
-// Шинээр баталгаажуулах код авах /json дотроос User Устгах/
+// Шинээр баталгаажуулах код авах /JSON дотроос User Устгах/
 
 exports.reSendEmailVerification = asyncHandler(async (req, res) => {
   const user = await req.db.user.findByPk(req.params.id);

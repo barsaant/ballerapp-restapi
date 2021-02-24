@@ -62,7 +62,7 @@ exports.updateCommonUser = asyncHandler(async (req, res) => {
   const check = jwt.verify(tokenCheck, process.env.JWT_SECRET);
 
   if (check.id != req.params.id) {
-    throw new ErrorMsg("Алдаа гарлаа!", 401);
+    throw new ErrorMsg("Та дахин нэвтэрнэ үү!", 401);
   }
 
   let user = await req.db.user.findByPk(req.params.id);
@@ -102,7 +102,7 @@ exports.updateCommonUserCurrentEmail = asyncHandler(async (req, res) => {
   const check = jwt.verify(tokenCheck, process.env.JWT_SECRET);
 
   if (check.id != req.params.id) {
-    throw new ErrorMsg("Алдаа гарлаа!", 401);
+    throw new ErrorMsg("Та дахин нэвтэрнэ үү!", 401);
   }
 
   let user = await req.db.user.findByPk(req.params.id);

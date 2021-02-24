@@ -78,7 +78,7 @@ exports.createKhoroo = asyncHandler(async (req, res) => {
   });
 
   if (!districtIdCheck) {
-    throw new ErrorMsg(`${districtId}-ID тай дүүрэг байхгүй байна!`, 400);
+    throw new ErrorMsg(`${districtId}-ID тай дүүрэг байхгүй байна!`, 404);
   }
 
   const khoroo = await req.db.khoroo.create({
@@ -104,7 +104,7 @@ exports.updateKhoroo = asyncHandler(async (req, res) => {
     });
 
     if (districtIdCheck) {
-      throw new ErrorMsg(`${districtId}-ID тай дүүрэг байхгүй байна!`, 400);
+      throw new ErrorMsg(`${districtId}-ID тай дүүрэг байхгүй байна!`, 404);
     }
   }
 

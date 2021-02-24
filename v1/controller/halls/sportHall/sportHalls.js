@@ -65,7 +65,7 @@ exports.getSportHalls = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     success: true,
-    coutn,
+    count,
     pages,
     message: "Амжилттай",
     sportHalls,
@@ -97,7 +97,7 @@ exports.createSportHall = asyncHandler(async (req, res) => {
 exports.updateSportHall = asyncHandler(async (req, res) => {
   let sportHall = await req.db.sportHall.findByPk(req.params.id);
   if (!sportHall) {
-    throw new ErrorMsg(`${req.params.id} ID-тай заал байхгүй байна!`);
+    throw new ErrorMsg(`${req.params.id} ID-тай заал байхгүй байна!`, 404);
   }
   const { khorooId, districtId, tagId, title } = req.body;
   if (khorooId || districtId) {
@@ -106,7 +106,7 @@ exports.updateSportHall = asyncHandler(async (req, res) => {
     });
 
     if (!khorooIdCheck) {
-      throw new ErrorMsg(`${khorooId}-ID тай хороо байхгүй байна!`, 400);
+      throw new ErrorMsg(`${khorooId}-ID тай хороо байхгүй байна!`, 404);
     }
 
     const districtIdCheck = await req.db.district.findOne({
@@ -114,7 +114,7 @@ exports.updateSportHall = asyncHandler(async (req, res) => {
     });
 
     if (!districtIdCheck) {
-      throw new ErrorMsg(`${districtId}-ID тай дүүрэг байхгүй байна!`, 400);
+      throw new ErrorMsg(`${districtId}-ID тай дүүрэг байхгүй байна!`, 404);
     }
   }
 
@@ -126,7 +126,7 @@ exports.updateSportHall = asyncHandler(async (req, res) => {
     for (var i = 0; i < tagId.length; i++) {
       const tagIdCheck = await req.db.tagSportHall.findByPk(tagId[i]);
       if (!tagIdCheck) {
-        throw new ErrorMsg(`${tagId}-ID тай таг байхгүй байна!`, 400);
+        throw new ErrorMsg(`${tagId}-ID тай таг байхгүй байна!`, 404);
       }
       await req.db.sportHalls_tag.create({
         hallId: req.params.id,
@@ -151,10 +151,12 @@ exports.deleteSportHall = asyncHandler(async (req, res) => {
   let sportHall = await req.db.sportHall.findByPk(req.params.id);
 
   if (!sportHall) {
-    throw new ErrorMsg(`${req.params.id} ID-тай заал байхгүй байна!`);
+    throw new ErrorMsg(`${req.params.id} ID-тай заал байхгүй байна!`, 404);
   }
 
   await req.db.sportHalls_tag.destroy({ where: { hallId: req.params.id } });
+  await req.db.favoriteSportHall.destroy({ where: { hallId: req.params.id } });
+  await req.db.rateSportHall.destroy({ where: { hallId: req.params.id } });
 
   await sportHall.destroy();
   res.status(200).json({

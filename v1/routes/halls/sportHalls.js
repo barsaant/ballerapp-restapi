@@ -12,9 +12,28 @@ const {
   createHallsUploadFile,
   getHallsUploadFiles,
 } = require("../../controller/medialibrary/mediaLibrarySportHalls");
+
+const {
+  getPostedSportHalls,
+} = require("../../controller/halls/sportHall/postedSportHalls");
+
+const {
+  getSavedSportHalls,
+} = require("../../controller/halls/sportHall/savedSportHalls");
+
+const {
+  getDeletedSportHalls,
+} = require("../../controller/halls/sportHall/deletedSportHalls");
+
 const router = express.Router();
 
 router.route("/").get(getSportHalls).post(createSportHall);
+
+router.route("/posted").get(getPostedSportHalls);
+
+router.route("/saved").get(getSavedSportHalls);
+
+router.route("/deleted").get(getDeletedSportHalls);
 
 router
   .route("/:id")

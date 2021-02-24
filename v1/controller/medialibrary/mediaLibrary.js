@@ -4,6 +4,7 @@ const paginate = require("../../utils/paginate");
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
+const fileUpload = require("express-fileupload");
 
 exports.getUploadFiles = asyncHandler(async (req, res) => {
   const page = parseInt(req.query.page) || 1;
@@ -71,70 +72,82 @@ exports.createUploadFile = asyncHandler(async (req, res) => {
   }
 
   var dir = process.env.GLOBAL_FILE_UPLOAD_DIR;
-
-  if (!fs.existsSync(dir)) {
+  const createDir = () => {
     fs.mkdir(dir, function (err) {
       if (err) {
-        return console.error(err);
+        return err;
       }
-      console.log("Хавтас амжилттай үүслээ!");
+      return null;
     });
-  }
-  const file = req.files.file;
-  let fileType;
-  if (
-    !file.mimetype.startsWith("image") &&
-    !file.mimetype.startsWith("video") &&
-    !file.mimetype.startsWith("application/pdf")
-  ) {
-    throw new ErrorMsg(
-      `${req.files.file.mimetype} төрлийн файл upload хийх боломжгүй.`
-    );
-  }
+  };
 
-  if (file.mimetype.startsWith("image")) {
-    fileType = "image";
-  } else if (file.mimetype.startsWith("video")) {
-    fileType = "video";
-  } else if (file.mimetype.startsWith("application/pdf")) {
-    fileType = "pdf";
-  }
-
-  if (file.size > process.env.MAX_UPLOAD_FILE_SIZE) {
-    throw new ErrorMsg(
-      `Дээд талдаа 2GB хэмжээтэй зүйл upload хийх боломжтой`,
-      400
-    );
-  }
-  const nameGenerate = crypto.randomBytes(3).toString("hex");
-  file.name = `global_${fileType}_${nameGenerate}${path.parse(file.name).ext}`;
-
-  file.mv(`${process.env.GLOBAL_FILE_UPLOAD_DIR}/${file.name}`, (err) => {
-    if (err) {
-      console.log(err);
+  const fileUpload = async () => {
+    const file = req.files.file;
+    let fileType;
+    if (
+      !file.mimetype.startsWith("image") &&
+      !file.mimetype.startsWith("video") &&
+      !file.mimetype.startsWith("application/pdf")
+    ) {
+      throw new ErrorMsg(
+        `${req.files.file.mimetype} төрлийн файл upload хийх боломжгүй.`
+      ,400);
     }
-  });
 
-  const mediaPath = process.env.GLOBAL_FILE_UPLOADED_DIR + file.name;
+    if (file.mimetype.startsWith("image")) {
+      fileType = "image";
+    } else if (file.mimetype.startsWith("video")) {
+      fileType = "video";
+    } else if (file.mimetype.startsWith("application/pdf")) {
+      fileType = "pdf";
+    }
 
-  const mediaLibrary = await req.db.mediaLibrary.create({
-    mediaPath: mediaPath,
-    mediaType: fileType,
-    mediaCategory: "global",
-    base: "primary",
-  });
+    if (file.size > process.env.MAX_UPLOAD_FILE_SIZE) {
+      throw new ErrorMsg(
+        `Дээд талдаа 2GB хэмжээтэй зүйл upload хийх боломжтой`,
+        400
+      );
+    }
+    const nameGenerate = crypto.randomBytes(3).toString("hex");
+    file.name = `global_${fileType}_${nameGenerate}${
+      path.parse(file.name).ext
+    }`;
 
-  res.status(200).json({
-    success: true,
-    mediaLibrary,
-  });
+    file.mv(`${process.env.GLOBAL_FILE_UPLOAD_DIR}/${file.name}`, (err) => {
+      if (err) {
+        console.log(err);
+      }
+    });
+
+    const mediaPath = process.env.GLOBAL_FILE_UPLOADED_DIR + file.name;
+
+    const mediaLibrary = await req.db.mediaLibrary.create({
+      mediaPath: mediaPath,
+      mediaType: fileType,
+      mediaCategory: "global",
+      base: "primary",
+    });
+
+    res.status(200).json({
+      success: true,
+      mediaLibrary,
+    });
+  };
+
+  if (!fs.existsSync(dir)) {
+    const createDirs = await createDir();
+    if (createDirs) {
+      throw new ErrorMsg("global хавтас үүссэнгүй", 500);
+    }
+    await fileUpload();
+  } else await fileUpload();
 });
 
 exports.deleteUploadFile = asyncHandler(async (req, res) => {
   const mediaLibrary = await req.db.mediaLibrary.findByPk(req.params.id);
 
   if (!mediaLibrary) {
-    throw new ErrorMsg(`${req.params.id}-тай файл байхгүй байна`, 400);
+    throw new ErrorMsg(`${req.params.id} ID-тай файл байхгүй байна`,404);
   }
 
   var path = process.env.FILE_UPLOADED_DIR + mediaLibrary.mediaPath;

@@ -15,6 +15,8 @@ const districtRoute = require("./v1/routes/halls/districts");
 const khorooRoute = require("./v1/routes/halls/khoroos");
 const sportHallRoute = require("./v1/routes/halls/sportHalls");
 const tagRoute = require("./v1/routes/halls/tagSportHalls");
+const favoriteHallRoute = require("./v1/routes/halls/favoriteSportHalls");
+const rateSportHallRoute = require("./v1/routes/halls/rateSportHalls");
 
 const server = express();
 
@@ -29,9 +31,23 @@ server.use(`${process.env.ROUTE}/users/`, userRoute);
 server.use(`${process.env.ROUTE}/districts/`, districtRoute);
 server.use(`${process.env.ROUTE}/khoroos/`, khorooRoute);
 server.use(`${process.env.ROUTE}/sporthalls/`, sportHallRoute);
+server.use(`${process.env.ROUTE}/ratesporthall`, rateSportHallRoute);
 server.use(`${process.env.ROUTE}/tagshalls/`, tagRoute);
+server.use(`${process.env.ROUTE}/favoritehalls/`, favoriteHallRoute);
 
 server.use(errorHandler);
+
+db.user.belongsToMany(db.sportHall, {
+  through: db.rateSportHall,
+  foreignKey: "userId",
+  otherKey: "hallId",
+});
+
+db.sportHall.belongsToMany(db.user, {
+  through: db.rateSportHall,
+  foreignKey: "hallId",
+  otherKey: "userId",
+});
 
 db.sportHall.belongsToMany(db.mediaLibrary, {
   through: db.mediaLibrary_sportHalls,
@@ -101,6 +117,6 @@ db.sequelize
   })
   .catch((err) => console.log(err));
 
-server.use("/", express.static("_public"));
+server.use("/", express.static("public"));
 
 server.listen(process.env.PORT, console.log(`Port: ${process.env.PORT}`));
