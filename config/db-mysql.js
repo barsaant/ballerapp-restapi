@@ -34,6 +34,12 @@ const models = [
   require("../v1/models/sporthalls/favoriteSportHall"),
   require("../v1/models/sporthalls/rateSportHall"),
   require("../v1/models/sporthalls/mediaLibrary_sportHalls"),
+  require("../v1/models/articles/article"),
+  require("../v1/models/articles/categoryArticle"),
+  require("../v1/models/articles/tagArticle"),
+  require("../v1/models/articles/articles_tag"),
+  require("../v1/models/articles/articles_category"),
+  require("../v1/models/articles/favoriteArticle"),
 ];
 
 models.forEach((model) => {

@@ -44,7 +44,6 @@ exports.getDistricts = asyncHandler(async (req, res) => {
     pages = Math.ceil((i + 1) / limit);
   }
 
-  console.log(count);
   const districts = await req.db.district.findAll(query);
 
   res.status(200).json({

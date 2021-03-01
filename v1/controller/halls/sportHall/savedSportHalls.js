@@ -22,7 +22,6 @@ exports.getSavedSportHalls = asyncHandler(async (req, res) => {
 
   const pagination = await paginate(page, limit, req.db.sportHall);
 
-  console.log(sort);
   let query = {
     offset: pagination.start - 1,
     limit,

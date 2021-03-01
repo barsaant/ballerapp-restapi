@@ -2,6 +2,7 @@ const asyncHandler = require("../../middleware/asyncHandler");
 const ErrorMsg = require("../../utils/ErrorMsg");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("../../utils/email");
+const crypto = require("crypto");
 
 exports.staffLogin = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -39,26 +40,45 @@ exports.staffLogin = asyncHandler(async (req, res) => {
     }
   );
 
-  res.status(200).json({
-    success: true,
-    message: "Амжилттай нэвтэрлээ",
-    token,
-    user,
-  });
+  const algorithm = "aes-256-ctr";
+  const enpassword = "APPBalAP1575";
+
+  const encrypt = (userId) => {
+    var cipher = crypto.createCipher(algorithm, enpassword);
+    var crypted = cipher.update(userId, "utf8", "hex");
+    crypted += cipher.final("hex");
+    return crypted;
+  };
+
+  const _cuid = encrypt(`${user.userId}`);
+
+  const cookieOption = {
+    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+  };
+
+  res
+    .status(200)
+    .cookie("_cuid", _cuid, cookieOption)
+    .cookie("AUTHtoken", token, cookieOption)
+    .json({
+      success: true,
+      message: "Амжилттай нэвтэрлээ",
+    });
 });
 
 exports.checkLogin = asyncHandler(async (req, res, next) => {
-  if (!req.headers.authorization) {
+  if (!req.cookies) {
     throw new ErrorMsg("Та эхлээд нэвтэрнэ үү!", 401);
   }
 
-  const tokenCheck = req.headers.authorization.split(" ")[1];
+  const authToken = req.cookies["AUTHtoken"];
+  const _cuid = req.cookies["_cuid"];
 
-  if (!tokenCheck) {
+  if (!authToken || !_cuid) {
     throw new ErrorMsg("Та дахин нэвтэрнэ үү!", 401);
   }
 
-  const check = jwt.verify(tokenCheck, process.env.JWT_SECRET);
+  const check = jwt.verify(authToken, process.env.JWT_SECRET);
 
   const user = await req.db.user.findByPk(check.id);
 
@@ -67,6 +87,22 @@ exports.checkLogin = asyncHandler(async (req, res, next) => {
   }
 
   if (user.role !== check.role) {
+    throw new ErrorMsg("Та дахин нэвтэрнэ үү!", 401);
+  }
+
+  const algorithm = "aes-256-ctr";
+  const enpassword = "APPBalAP1575";
+
+  const decrypt = (encrypted) => {
+    var decipher = crypto.createDecipher(algorithm, enpassword);
+    var dec = decipher.update(encrypted, "hex", "utf8");
+    dec += decipher.final("utf8");
+    return dec;
+  };
+
+  const uid = decrypt(_cuid);
+
+  if (uid !== `${user.userId}`) {
     throw new ErrorMsg("Та дахин нэвтэрнэ үү!", 401);
   }
 
@@ -81,8 +117,6 @@ exports.checkLogin = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     message: "Амжилттай",
-    token,
-    user,
   });
 });
 

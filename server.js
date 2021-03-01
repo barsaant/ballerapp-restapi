@@ -8,6 +8,7 @@ const fileupload = require("express-fileupload");
 
 const errorHandler = require("./v1/middleware/error");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 
 const userRoute = require("./v1/routes/global/users");
 const mediaRoute = require("./v1/routes/global/mediaLibrary");
@@ -20,10 +21,27 @@ const rateSportHallRoute = require("./v1/routes/halls/rateSportHalls");
 
 const server = express();
 
+var whitelist = ["http://localhost:3000"];
+
+var corsOptions = {
+  origin: function (origin, callback) {
+    console.log(origin);
+    if (origin === undefined || whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Access Denied.."));
+    }
+  },
+  allowedHeaders: "Authorization, Set-Cookie, Content-Type",
+  methods: "GET, POST, PUT, DELETE",
+  credentials: true,
+};
+
 server.use(injectDb(db));
+server.use(cookieParser());
 server.use(express.json());
 server.use(fileupload());
-server.use(cors());
+server.use(cors(corsOptions));
 
 // Server Route
 server.use(`${process.env.ROUTE}/medias/`, mediaRoute);

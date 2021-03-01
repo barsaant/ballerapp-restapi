@@ -82,7 +82,8 @@ exports.createUploadFile = asyncHandler(async (req, res) => {
   };
 
   const fileUpload = async () => {
-    const file = req.files.file;
+    console.log(req.files);
+    const file = req.files.File;
     let fileType;
     if (
       !file.mimetype.startsWith("image") &&
@@ -90,8 +91,9 @@ exports.createUploadFile = asyncHandler(async (req, res) => {
       !file.mimetype.startsWith("application/pdf")
     ) {
       throw new ErrorMsg(
-        `${req.files.file.mimetype} төрлийн файл upload хийх боломжгүй.`
-      ,400);
+        `${req.files.file.mimetype} төрлийн файл upload хийх боломжгүй.`,
+        400
+      );
     }
 
     if (file.mimetype.startsWith("image")) {
@@ -147,7 +149,7 @@ exports.deleteUploadFile = asyncHandler(async (req, res) => {
   const mediaLibrary = await req.db.mediaLibrary.findByPk(req.params.id);
 
   if (!mediaLibrary) {
-    throw new ErrorMsg(`${req.params.id} ID-тай файл байхгүй байна`,404);
+    throw new ErrorMsg(`${req.params.id} ID-тай файл байхгүй байна`, 404);
   }
 
   var path = process.env.FILE_UPLOADED_DIR + mediaLibrary.mediaPath;
