@@ -57,61 +57,7 @@ exports.getTagSportHalls = asyncHandler(async (req, res) => {
 });
 
 exports.getTagSportHall = asyncHandler(async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-  const sort = req.query.sort;
-  let select = req.query.select;
-  if (select) {
-    select = select.split(" ");
-  }
-
-  ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
-
-  const pagination = await paginate(page, limit, req.db.sportHall);
-
-  let query = {
-    offset: pagination.start - 1,
-    limit,
-    include: [
-      {
-        model: db.tagSportHall,
-        attributes: ["tagId", "tagName", "createdAt", "updatedAt"],
-        through: { attributes: [] },
-      },
-    ],
-  };
-  if (req.query) {
-    query.where = req.query;
-  }
-
-  if (select) {
-    query.attributes = select;
-  }
-
-  if (sort) {
-    query.order = sort
-      .split(" ")
-      .map((el) => [
-        el.charAt(0) === "-" ? el.substring(1) : el,
-        el.charAt(0) === "-" ? "DESC" : "ASC",
-      ]);
-  }
-
-  const tagSportHall = await req.db.tagSportHall.findByPk(req.params.id);
-  if (!tagSportHall) {
-    throw new ErrorMsg(req.params.id + " ID-тай таг байхгүй байна.", 404);
-  }
-
-  const { tagId, tagName, createdAt, updatedAt } = tagSportHall;
-
-  const allSportHalls = await tagSportHall.getSportHalls();
-
-  let count;
-  let pages;
-  for (var i = 0; i < allSportHalls.length; i++) {
-    count = i + 1;
-    pages = Math.ceil((i + 1) / limit);
-  }
+  e;
 
   const sportHalls = await tagSportHall.getSportHalls(query);
 

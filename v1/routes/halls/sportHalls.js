@@ -1,4 +1,5 @@
 const express = require("express");
+const { protect, authorize } = require("../../middleware/protect");
 
 const {
   getSportHalls,
@@ -27,23 +28,30 @@ const {
 
 const router = express.Router();
 
-router.route("/").get(getSportHalls).post(createSportHall);
+router
+  .route("/")
+  .get(protect, authorize("admin", "superadmin"), getSportHalls)
+  .post(protect, authorize("admin", "superadmin"), createSportHall);
 
 router.route("/posted").get(getPostedSportHalls);
 
-router.route("/saved").get(getSavedSportHalls);
+router
+  .route("/saved")
+  .get(protect, authorize("admin", "superadmin"), getSavedSportHalls);
 
-router.route("/deleted").get(getDeletedSportHalls);
+router
+  .route("/deleted")
+  .get(protect, authorize("admin", "superadmin"), getDeletedSportHalls);
 
 router
   .route("/:id")
   .get(getSportHall)
-  .put(updateSportHall)
-  .delete(deleteSportHall);
+  .put(protect, authorize("admin", "superadmin"), updateSportHall)
+  .delete(protect, authorize("admin", "superadmin"), deleteSportHall);
 
 router
   .route("/:id/upload")
-  .post(createHallsUploadFile)
-  .get(getHallsUploadFiles);
+  .post(protect, authorize("admin", "superadmin"), createHallsUploadFile)
+  .get(protect, authorize("admin", "superadmin"), getHallsUploadFiles);
 
 module.exports = router;

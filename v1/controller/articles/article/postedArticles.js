@@ -5,7 +5,7 @@ const paginate = require("../../../utils/paginate");
 
 const Op = Sequelize.Op;
 
-exports.getSavedSportHalls = asyncHandler(async (req, res) => {
+exports.getPostedArticles = asyncHandler(async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const sort = req.query.sort;
@@ -17,15 +17,20 @@ exports.getSavedSportHalls = asyncHandler(async (req, res) => {
 
   ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
 
-  const pagination = await paginate(page, limit, req.db.sportHall);
+  const pagination = await paginate(page, limit, req.db.article);
 
   let query = {
     offset: pagination.start - 1,
     limit,
-    order: [["hallId", "DESC"]],
+    order: [["articleId", "DESC"]],
     include: [
       {
-        model: db.tagSportHall,
+        model: db.categoryArticle,
+        attributes: ["categoryId", "categoryName", "createdAt", "updatedAt"],
+        through: { attributes: [] },
+      },
+      {
+        model: db.tagArticle,
         attributes: ["tagId", "tagName", "createdAt", "updatedAt"],
         through: { attributes: [] },
       },
@@ -35,14 +40,14 @@ exports.getSavedSportHalls = asyncHandler(async (req, res) => {
   if (search) {
     where = {
       [Op.and]: [
-        { status: "saved" },
+        { status: "posted" },
         { title: { [Op.like]: `%${req.query.search}%` } },
         req.query.select,
       ],
     };
   } else {
     where = {
-      [Op.and]: [{ status: "saved" }, req.query],
+      [Op.and]: [{ status: "posted" }, req.query],
     };
   }
 
@@ -63,21 +68,21 @@ exports.getSavedSportHalls = asyncHandler(async (req, res) => {
       ]);
   }
 
-  const allSportHalls = await req.db.sportHall.findAll({ where });
+  const allArticle = await req.db.article.findAll({ where });
   let count;
   let pages;
-  for (var i = 0; i < allSportHalls.length; i++) {
+  for (var i = 0; i < allArticle.length; i++) {
     count = i + 1;
     pages = Math.ceil((i + 1) / limit);
   }
 
-  const sportHalls = await req.db.sportHall.findAll(query);
+  const articles = await req.db.articles.findAll(query);
 
   res.status(200).json({
     success: true,
     count,
     pages,
     message: "Амжилттай",
-    sportHalls,
+    articles,
   });
 });

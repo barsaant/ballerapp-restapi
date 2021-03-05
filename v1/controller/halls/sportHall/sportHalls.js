@@ -99,23 +99,30 @@ exports.updateSportHall = asyncHandler(async (req, res) => {
   if (!sportHall) {
     throw new ErrorMsg(`${req.params.id} ID-тай заал байхгүй байна!`, 404);
   }
-  const { khorooId, districtId, tagId, title } = req.body;
-  if (khorooId || districtId) {
-    const khorooIdCheck = await req.db.khoroo.findOne({
-      where: { khorooId: khorooId },
-    });
+  const { khorooId, districtId, tagId } = req.body;
 
-    if (!khorooIdCheck) {
-      throw new ErrorMsg(`${khorooId}-ID тай хороо байхгүй байна!`, 404);
-    }
+  if (!districtId) {
+    throw new ErrorMsg("Дүүргээ сонгоно уу!", 400);
+  }
 
-    const districtIdCheck = await req.db.district.findOne({
-      where: { districtId: districtId },
-    });
+  if (!khorooId) {
+    throw new ErrorMsg("Хороогоо сонгоно уу!", 400);
+  }
 
-    if (!districtIdCheck) {
-      throw new ErrorMsg(`${districtId}-ID тай дүүрэг байхгүй байна!`, 404);
-    }
+  const khorooIdCheck = await req.db.khoroo.findOne({
+    where: { khorooId: khorooId },
+  });
+
+  if (!khorooIdCheck) {
+    throw new ErrorMsg(`${khorooId}-ID тай хороо байхгүй байна!`, 404);
+  }
+
+  const districtIdCheck = await req.db.district.findOne({
+    where: { districtId: districtId },
+  });
+
+  if (!districtIdCheck) {
+    throw new ErrorMsg(`${districtId}-ID тай дүүрэг байхгүй байна!`, 404);
   }
 
   await req.db.sportHalls_tag.destroy({ where: { hallId: req.params.id } });
@@ -126,7 +133,7 @@ exports.updateSportHall = asyncHandler(async (req, res) => {
     for (var i = 0; i < tagId.length; i++) {
       const tagIdCheck = await req.db.tagSportHall.findByPk(tagId[i]);
       if (!tagIdCheck) {
-        throw new ErrorMsg(`${tagId}-ID тай таг байхгүй байна!`, 404);
+        throw new ErrorMsg(`${tagId} ID-тай таг байхгүй байна!`, 404);
       }
       await req.db.sportHalls_tag.create({
         hallId: req.params.id,

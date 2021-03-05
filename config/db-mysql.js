@@ -40,6 +40,7 @@ const models = [
   require("../v1/models/articles/articles_tag"),
   require("../v1/models/articles/articles_category"),
   require("../v1/models/articles/favoriteArticle"),
+  require("../v1/models/articles/mediaLibrary_articles"),
 ];
 
 models.forEach((model) => {

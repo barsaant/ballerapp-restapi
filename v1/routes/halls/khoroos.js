@@ -1,4 +1,5 @@
 const express = require("express");
+const { protect, authorize } = require("../../middleware/protect");
 
 const {
   getKhoroos,
@@ -14,9 +15,16 @@ const {
 
 const router = express.Router();
 
-router.route("/").get(getKhoroos).post(createKhoroo);
+router
+  .route("/")
+  .get(getKhoroos)
+  .post(protect, authorize("admin", "superadmin"), createKhoroo);
 
-router.route("/:id").get(getkhoroo).put(updateKhoroo).delete(deleteKhoroo);
+router
+  .route("/:id")
+  .get(getkhoroo)
+  .put(protect, authorize("admin", "superadmin"), updateKhoroo)
+  .delete(protect, authorize("admin", "superadmin"), deleteKhoroo);
 
 router.route("/:id/sporthalls").get(getKhorooSportHalls);
 

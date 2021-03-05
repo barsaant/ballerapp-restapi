@@ -32,25 +32,36 @@ exports.staffLogin = asyncHandler(async (req, res) => {
     throw new ErrorMsg("Танд нэвтрэх эрх байхгүй байна", 401);
   }
 
-  const token = jwt.sign(
-    { id: user.userId, role: user.role },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: process.env.JWT_EXPIRESIN,
-    }
-  );
-
   const algorithm = "aes-256-ctr";
-  const enpassword = "APPBalAP1575";
+  const enpassword = "Rp9Y}V>Qh.>(2u9X";
 
-  const encrypt = (userId) => {
+  const tkpassword = "?,-FzZUgZ5<[`~+U";
+
+  const encryptUserId = (userId) => {
     var cipher = crypto.createCipher(algorithm, enpassword);
     var crypted = cipher.update(userId, "utf8", "hex");
     crypted += cipher.final("hex");
     return crypted;
   };
 
-  const _cuid = encrypt(`${user.userId}`);
+  const encryptToken = (userId) => {
+    var cipher = crypto.createCipher(algorithm, tkpassword);
+    var crypted = cipher.update(userId, "utf8", "hex");
+    crypted += cipher.final("hex");
+    return crypted;
+  };
+
+  const _tu = encryptToken(`${user.userId}`);
+  const _tr = encryptToken(`${user.role}`);
+
+  const _cuid = encryptUserId(`${user.userId}`);
+  const _cr = encryptUserId(`${user.role}`);
+
+  // _tu = hereglegch _ts = erh
+
+  const token = jwt.sign({ _tu: _tu, _tr: _tr }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRESIN,
+  });
 
   const cookieOption = {
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
@@ -59,6 +70,7 @@ exports.staffLogin = asyncHandler(async (req, res) => {
   res
     .status(200)
     .cookie("_cuid", _cuid, cookieOption)
+    .cookie("_cr", _cr, cookieOption)
     .cookie("AUTHtoken", token, cookieOption)
     .json({
       success: true,
@@ -73,46 +85,58 @@ exports.checkLogin = asyncHandler(async (req, res, next) => {
 
   const authToken = req.cookies["AUTHtoken"];
   const _cuid = req.cookies["_cuid"];
+  const _cr = req.cookies["_cr"];
 
   if (!authToken || !_cuid) {
     throw new ErrorMsg("Та дахин нэвтэрнэ үү!", 401);
   }
 
-  const check = jwt.verify(authToken, process.env.JWT_SECRET);
-
-  const user = await req.db.user.findByPk(check.id);
-
-  if (!user) {
-    throw new ErrorMsg("Та дахин нэвтэрнэ үү!", 401);
-  }
-
-  if (user.role !== check.role) {
-    throw new ErrorMsg("Та дахин нэвтэрнэ үү!", 401);
-  }
-
   const algorithm = "aes-256-ctr";
-  const enpassword = "APPBalAP1575";
+  const enpassword = "Rp9Y}V>Qh.>(2u9X";
+  const tkpassword = "?,-FzZUgZ5<[`~+U";
 
-  const decrypt = (encrypted) => {
+  const decryptUserId = (encrypted) => {
     var decipher = crypto.createDecipher(algorithm, enpassword);
     var dec = decipher.update(encrypted, "hex", "utf8");
     dec += decipher.final("utf8");
     return dec;
   };
 
-  const uid = decrypt(_cuid);
+  const uid = decryptUserId(_cuid);
+  const urole = decryptUserId(_cr);
+
+  const decryptToken = (encrypted) => {
+    var decipher = crypto.createDecipher(algorithm, tkpassword);
+    var dec = decipher.update(encrypted, "hex", "utf8");
+    dec += decipher.final("utf8");
+    return dec;
+  };
+
+  const tokenReq = jwt.verify(authToken, process.env.JWT_SECRET);
+
+  const userId = decryptToken(tokenReq._tu);
+  const userRole = decryptToken(tokenReq._tr);
+
+  const user = await req.db.user.findByPk(parseInt(userId));
+
+  if (!user) {
+    throw new ErrorMsg("Та дахин нэвтэрнэ үү!", 401);
+  }
+
+  if (user.role !== userRole) {
+    throw new ErrorMsg("Та дахин нэвтэрнэ үү!", 401);
+  }
 
   if (uid !== `${user.userId}`) {
     throw new ErrorMsg("Та дахин нэвтэрнэ үү!", 401);
   }
 
-  const token = jwt.sign(
-    { id: user.userId, role: user.role },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: process.env.JWT_EXPIRESIN,
-    }
-  );
+  console.log(urole);
+  console.log(user.role);
+
+  if (urole !== user.role) {
+    throw new ErrorMsg("Та дахин нэвтэрнэ үү!", 401);
+  }
 
   res.status(200).json({
     success: true,

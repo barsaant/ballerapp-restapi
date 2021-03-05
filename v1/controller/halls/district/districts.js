@@ -70,7 +70,7 @@ exports.getDistrict = asyncHandler(async (req, res) => {
 exports.createDistrict = asyncHandler(async (req, res) => {
   const { districtName } = req.body;
   if (!districtName) {
-    throw new ErrorMsg("Дүүргийн нэрийг оруулна уу!", 401);
+    throw new ErrorMsg("Дүүргийн нэрийг оруулна уу!", 400);
   }
 
   const districtNameCheck = await req.db.district.findOne({

@@ -1,4 +1,5 @@
 const express = require("express");
+const { protect, authorize } = require("../../middleware/protect");
 
 const {
   getTagSportHalls,
@@ -10,12 +11,15 @@ const {
 
 const router = express.Router();
 
-router.route("/").get(getTagSportHalls).post(createTagSportHall);
+router
+  .route("/")
+  .get(getTagSportHalls)
+  .post(protect, authorize("admin", "superadmin"), createTagSportHall);
 
 router
   .route("/:id")
   .get(getTagSportHall)
-  .put(updateTagSportHall)
-  .delete(deleteTagSportHall);
+  .put(protect, authorize("admin", "superadmin"), updateTagSportHall)
+  .delete(protect, authorize("admin", "superadmin"), deleteTagSportHall);
 
 module.exports = router;
