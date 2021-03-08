@@ -19,7 +19,17 @@ const sequelize = new Sequelize(
       acquire: 60000,
       idle: 10000,
     },
-
+    dialectOptions: {
+      dateStrings: true,
+      typeCast: true,
+      // typeCast: function (field, next) {
+      //   if (field.type === "DATETIME") {
+      //     return field.string();
+      //   }
+      //   return next();
+      // },
+    },
+    timezone: "+08:00",
     operatorAliases: false,
   }
 );

@@ -84,6 +84,8 @@ exports.getArticles = asyncHandler(async (req, res) => {
 exports.getArticle = asyncHandler(async (req, res) => {
   const article = await req.db.article.findByPk(req.params.id, tagJson);
 
+  console.log(Date.parse(article.createdAt));
+
   if (!article) {
     throw new ErrorMsg(`${req.params.id} ID-тай нийтлэл байхгүй байна!`);
   }

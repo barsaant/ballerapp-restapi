@@ -161,7 +161,9 @@ exports.updateCommonUserEmail = asyncHandler(async (req, res) => {
       throw new ErrorMsg("Алдаа гарлаа", 401);
     }
 
-  if (user.emailChangeVerificationExpire < Date.now()) {
+  console.log(Date.parse(user.emailChangeVerificationExpire) < Date.now());
+
+  if (Date.parse(user.emailChangeVerificationExpire) < Date.now()) {
     user.update({ emailChangeVerificationCode: null });
     user.update({ emailChangeVerificationExpire: null });
     throw new ErrorMsg("Уучлаарай. Баталгаажуулах хугацаа дууссан байна!", 400);
@@ -214,7 +216,7 @@ exports.updateCommonEmail = asyncHandler(async (req, res) => {
 
   let user = await req.db.user.findByPk(req.params.id);
 
-  if (user.emailChangeVerifiedExpire < Date.now()) {
+  if (Date.parse(user.emailChangeVerifiedExpire) < Date.now()) {
     user.update({ emailChangeVerified: "false" });
     throw new ErrorMsg("Уучлаарай email солих хугацаа дууссан байна", 400);
   }

@@ -201,7 +201,7 @@ exports.emailVerify = asyncHandler(async (req, res) => {
     throw new ErrorMsg("Баталгаажуулах код буруу байна!", 400);
   }
 
-  if (user.emailVerificationCodeExpire < Date.now()) {
+  if (Date.parse(user.emailVerificationCodeExpire) < Date.now()) {
     user.update({
       emailVerificationCode: null,
       emailVerificationCodeExpire: null,
@@ -209,7 +209,11 @@ exports.emailVerify = asyncHandler(async (req, res) => {
     throw new ErrorMsg("Баталгаажуулах кодны хугацаа дууссан байна!", 400);
   }
 
-  await user.update({ emailVerified: "true" });
+  await user.update({
+    emailVerified: "true",
+    emailVerificationCode: null,
+    emailVerificationCodeExpire: null,
+  });
 
   const token = jwt.sign(
     { id: user.userId, role: user.role },
