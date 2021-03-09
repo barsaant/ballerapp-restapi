@@ -41,7 +41,7 @@ var corsOptions = {
   methods: "GET, POST, PUT, DELETE",
   credentials: true,
 };
-
+server.set("trust proxy", 1);
 server.use(injectDb(db));
 server.use(shouldSendSameSiteNone);
 server.use(cookieParser());
