@@ -3,6 +3,7 @@ const ErrorMsg = require("../../utils/ErrorMsg");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("../../utils/email");
 const crypto = require("crypto");
+const { NONAME } = require("dns");
 
 exports.staffLogin = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -65,6 +66,7 @@ exports.staffLogin = asyncHandler(async (req, res) => {
 
   const cookieOption = {
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    sameSite: "None",
   };
 
   res
