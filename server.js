@@ -27,6 +27,8 @@ const server = express();
 
 var whitelist = [
   "https://dashboard.baller.mn",
+  "http://dashboard.baller.mn",
+  "http://baller.mn:5000",
   "http://localhost:3000",
   "http://localhost:5000",
 ];
