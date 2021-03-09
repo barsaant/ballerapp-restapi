@@ -64,6 +64,9 @@ exports.staffLogin = asyncHandler(async (req, res) => {
   });
 
   const cookieOption = {
+    domain: "dashboard.baller.mn",
+    secure: true,
+    httpOnly: true,
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
   };
 
@@ -130,9 +133,6 @@ exports.checkLogin = asyncHandler(async (req, res, next) => {
   if (uid !== `${user.userId}`) {
     throw new ErrorMsg("Та дахин нэвтэрнэ үү!", 401);
   }
-
-  console.log(urole);
-  console.log(user.role);
 
   if (urole !== user.role) {
     throw new ErrorMsg("Та дахин нэвтэрнэ үү!", 401);

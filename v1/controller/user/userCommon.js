@@ -161,7 +161,7 @@ exports.updateCommonUserEmail = asyncHandler(async (req, res) => {
       throw new ErrorMsg("Алдаа гарлаа", 401);
     }
 
-  console.log(Date.parse(user.emailChangeVerificationExpire) < Date.now());
+
 
   if (Date.parse(user.emailChangeVerificationExpire) < Date.now()) {
     user.update({ emailChangeVerificationCode: null });

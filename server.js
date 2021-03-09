@@ -25,7 +25,7 @@ const favoriteArticleRoute = require("./v1/routes/articles/favoriteArticles");
 
 const server = express();
 
-var whitelist = ["http://localhost:3000"];
+var whitelist = ["https://dashboard.baller.mn"];
 
 var corsOptions = {
   origin: function (origin, callback) {

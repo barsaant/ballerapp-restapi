@@ -52,7 +52,6 @@ exports.updateUserStaff = asyncHandler(async (req, res) => {
 
   if (email) {
     const emailCheck = await req.db.user.findOne({ where: { email: email } });
-    console.log(emailCheck);
     if (emailCheck) {
       throw new ErrorMsg(
         `${email} бүртгэгдсэн байна. Email солих хэсгийг цуцална уу`,
