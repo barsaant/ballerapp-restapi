@@ -64,8 +64,9 @@ exports.staffLogin = asyncHandler(async (req, res) => {
   });
 
   const cookieOption = {
+    secure: true,
+    httpOnly: false,
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    httpOnly: true,
   };
 
   res
