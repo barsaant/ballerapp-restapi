@@ -64,9 +64,9 @@ exports.staffLogin = asyncHandler(async (req, res) => {
   });
 
   const cookieOption = {
-    domain: "dashboard.baller.mn",
     secure: true,
-    httpOnly: true,
+    httpOnly: false,
+    sameSite: "none",
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
   };
 
