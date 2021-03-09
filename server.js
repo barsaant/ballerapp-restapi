@@ -8,6 +8,7 @@ const fileupload = require("express-fileupload");
 
 const errorHandler = require("./v1/middleware/error");
 const cors = require("cors");
+const { shouldSendSameSiteNone } = require("should-send-same-site-none");
 const cookieParser = require("cookie-parser");
 
 const userRoute = require("./v1/routes/global/users");
@@ -42,6 +43,7 @@ var corsOptions = {
 };
 
 server.use(injectDb(db));
+server.use(shouldSendSameSiteNone);
 server.use(cookieParser());
 server.use(express.json());
 server.use(fileupload());
