@@ -18,6 +18,7 @@ const {
 
 const {
   staffLogin,
+  staffLogout,
   checkLogin,
   loginUser,
   emailVerify,
@@ -36,6 +37,8 @@ router.route("/register").post(registerUser);
 router.route("/:id/update").put(updateCommonUser);
 
 router.route("/signin").post(staffLogin);
+
+router.route("/signout").post(staffLogout);
 
 router.route("/login").post(loginUser);
 

@@ -79,6 +79,23 @@ exports.staffLogin = asyncHandler(async (req, res) => {
     });
 });
 
+exports.staffLogout = asyncHandler(async (req, res, next) => {
+  const cookieOption = {
+    expires: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000),
+    httpOnly: true,
+  };
+
+  res
+    .status(200)
+    .cookie("_cuid", null, cookieOption)
+    .cookie("_cr", null, cookieOption)
+    .cookie("AUTHtoken", null, cookieOption)
+    .json({
+      success: true,
+      message: "Амжилттай",
+    });
+});
+
 exports.checkLogin = asyncHandler(async (req, res, next) => {
   if (!req.cookies) {
     throw new ErrorMsg("Та нэвтэрнэ үү!", 401);
