@@ -65,6 +65,7 @@ exports.staffLogin = asyncHandler(async (req, res) => {
 
   const cookieOption = {
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    httpOnly: true,
   };
 
   res
@@ -80,7 +81,7 @@ exports.staffLogin = asyncHandler(async (req, res) => {
 
 exports.checkLogin = asyncHandler(async (req, res, next) => {
   if (!req.cookies) {
-    throw new ErrorMsg("Та эхлээд нэвтэрнэ үү!", 401);
+    throw new ErrorMsg("Та нэвтэрнэ үү!", 401);
   }
 
   const authToken = req.cookies["AUTHtoken"];
@@ -88,7 +89,7 @@ exports.checkLogin = asyncHandler(async (req, res, next) => {
   const _cr = req.cookies["_cr"];
 
   if (!authToken || !_cuid) {
-    throw new ErrorMsg("Та дахин нэвтэрнэ үү!", 401);
+    throw new ErrorMsg("Та нэвтэрнэ үү!", 401);
   }
 
   const algorithm = "aes-256-ctr";
