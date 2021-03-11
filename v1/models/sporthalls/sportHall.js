@@ -26,10 +26,12 @@ module.exports = function (sequelize, DataTypes) {
       info: {
         type: DataTypes.TEXT,
         allowNull: true,
+        defaultValue: " ",
       },
       phone: {
         type: DataTypes.TEXT,
         allowNull: true,
+        defaultValue: " ",
       },
       districtId: {
         type: DataTypes.INTEGER,
@@ -52,10 +54,22 @@ module.exports = function (sequelize, DataTypes) {
       address: {
         type: DataTypes.TEXT,
         allowNull: true,
+        defaultValue: " ",
       },
       price: {
         type: DataTypes.INTEGER,
         allowNull: true,
+        defaultValue: 0,
+      },
+      longitude: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+        defaultValue: " ",
+      },
+      latitude: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+        defaultValue: " ",
       },
       status: {
         type: DataTypes.ENUM("posted", "saved", "deleted"),

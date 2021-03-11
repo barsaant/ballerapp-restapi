@@ -1,4 +1,5 @@
 const express = require("express");
+const { protect, authorize } = require("../../middleware/protect");
 
 const {
   getArticles,
@@ -29,17 +30,28 @@ const router = express.Router();
 
 router.route("/posted").get(getPostedArticles);
 
-router.route("/saved").get(getSavedArticles);
+router
+  .route("/saved")
+  .get(protect, authorize("admin", "superadmin"), getSavedArticles);
 
-router.route("/deleted").get(getDeletedArticles);
+router
+  .route("/deleted")
+  .get(protect, authorize("admin", "superadmin"), getDeletedArticles);
 
-router.route("/").get(getArticles).post(createArticle);
+router
+  .route("/")
+  .get(getArticles)
+  .post(protect, authorize("admin", "superadmin"), createArticle);
 
-router.route("/:id").get(getArticle).put(updateArticle).delete(deleteArticle);
+router
+  .route("/:id")
+  .get(protect, authorize("admin", "superadmin"), getArticle)
+  .put(protect, authorize("admin", "superadmin"), updateArticle)
+  .delete(protect, authorize("admin", "superadmin"), deleteArticle);
 
 router
   .route("/:id/upload")
-  .post(createArticlesUploadFile)
-  .get(getArticlesUploadFiles);
+  .post(protect, authorize("admin", "superadmin"), createArticlesUploadFile)
+  .get(protect, authorize("admin", "superadmin"), getArticlesUploadFiles);
 
 module.exports = router;

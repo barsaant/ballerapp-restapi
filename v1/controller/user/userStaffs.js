@@ -26,7 +26,12 @@ exports.getUser = asyncHandler(async (req, res) => {
 });
 
 exports.createUserStaff = asyncHandler(async (req, res) => {
-  const { email } = req.body;
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    throw new ErrorMsg(`Талбарыг гүйцэт бөглөнө үү!`, 400);
+  }
+
   const uniqueMail = await req.db.user.findOne({ where: { email: email } });
 
   if (uniqueMail) {
@@ -83,7 +88,7 @@ exports.deleteUserStaff = asyncHandler(async (req, res) => {
   await req.db.favoriteSportHall.destroy({ where: { userId: req.params.id } });
   await req.db.rateSportHall.destroy({ where: { userId: req.params.id } });
 
-  await req.db.user.destroy();
+  await user.destroy();
   res.status(200).json({
     success: true,
     message: "Амжилттай устгалаа",
