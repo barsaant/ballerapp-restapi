@@ -83,7 +83,7 @@ exports.createUploadFile = asyncHandler(async (req, res) => {
 
   const fileUpload = async () => {
     console.log(req.files);
-    const file = req.files.File;
+    const file = req.files.file;
     let fileType;
     if (
       !file.mimetype.startsWith("image") &&

@@ -3,7 +3,6 @@ const ErrorMsg = require("../../utils/ErrorMsg");
 const fs = require("fs");
 const crypto = require("crypto");
 const path = require("path");
-const { create } = require("domain");
 
 exports.getArticlesUploadFiles = asyncHandler(async (req, res) => {
   const articles = await req.db.mediaLibrary_articles.findAll({
