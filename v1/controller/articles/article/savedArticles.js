@@ -76,7 +76,7 @@ exports.getSavedArticles = asyncHandler(async (req, res) => {
     pages = Math.ceil((i + 1) / limit);
   }
 
-  const articles = await req.db.articles.findAll(query);
+  const articles = await req.db.article.findAll(query);
 
   res.status(200).json({
     success: true,

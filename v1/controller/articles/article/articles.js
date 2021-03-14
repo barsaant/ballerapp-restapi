@@ -106,7 +106,7 @@ exports.createArticle = asyncHandler(async (req, res) => {
 });
 
 exports.updateArticle = asyncHandler(async (req, res) => {
-  let article = req.db.article.findByPk(req.params.id);
+  let article = await req.db.article.findByPk(req.params.id);
 
   if (!article) {
     throw new ErrorMsg(`${req.params.id} ID-тай нийтлэл олдсонгүй.`, 400);
