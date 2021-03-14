@@ -28,15 +28,9 @@ const {
 
 const router = express.Router();
 
-router.route("/posted").get(getPostedArticles);
-
-router
-  .route("/saved")
-  .get(protect, authorize("admin", "superadmin"), getSavedArticles);
-
-router
-  .route("/deleted")
-  .get(protect, authorize("admin", "superadmin"), getDeletedArticles);
+router.route("/:id/posted").get(getPostedArticles);
+router.route("/:id/saved").get(getSavedArticles);
+router.route("/:id/deleted").get(getDeletedArticles);
 
 router
   .route("/")
