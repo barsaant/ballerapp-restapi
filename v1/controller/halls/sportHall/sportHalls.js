@@ -94,20 +94,28 @@ exports.createSportHall = asyncHandler(async (req, res) => {
   });
 });
 
+exports.moveStatusSportHall = asyncHandler(async (req, res) => {
+  let sportHall = await req.db.sportHall.findByPk(req.params.id);
+  if (!sportHall) {
+    throw new ErrorMsg(`${req.params.id} ID-тай заал байхгүй байна!`, 404);
+  }
+
+  const { status } = req.body;
+
+  sportHall.update({ status: status });
+
+  res.status(200).json({
+    success: true,
+    message: "Амжилттай устгалаа",
+  });
+});
+
 exports.updateSportHall = asyncHandler(async (req, res) => {
   let sportHall = await req.db.sportHall.findByPk(req.params.id);
   if (!sportHall) {
     throw new ErrorMsg(`${req.params.id} ID-тай заал байхгүй байна!`, 404);
   }
   const { khorooId, districtId, tagId } = req.body;
-
-  if (!districtId) {
-    throw new ErrorMsg("Дүүргээ сонгоно уу!", 400);
-  }
-
-  if (!khorooId) {
-    throw new ErrorMsg("Хороогоо сонгоно уу!", 400);
-  }
 
   const khorooIdCheck = await req.db.khoroo.findOne({
     where: { khorooId: khorooId },

@@ -7,6 +7,7 @@ const {
   createSportHall,
   updateSportHall,
   deleteSportHall,
+  moveStatusSportHall,
 } = require("../../controller/halls/sportHall/sportHalls");
 
 const {
@@ -48,6 +49,10 @@ router
   .get(getSportHall)
   .put(protect, authorize("admin", "superadmin"), updateSportHall)
   .delete(protect, authorize("admin", "superadmin"), deleteSportHall);
+
+router
+  .route("/:id/delete")
+  .put(protect, authorize("admin", "superadmin"), moveStatusSportHall);
 
 router
   .route("/:id/upload")
