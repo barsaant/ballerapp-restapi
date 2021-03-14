@@ -47,11 +47,6 @@ exports.getUploadFiles = asyncHandler(async (req, res) => {
     message: "Амжилттай",
     mediaLibraries,
   });
-
-  res.status(200).json({
-    success: true,
-    media,
-  });
 });
 
 exports.getUploadFile = asyncHandler(async (req, res) => {
