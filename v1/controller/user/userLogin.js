@@ -81,9 +81,9 @@ exports.staffLogin = asyncHandler(async (req, res) => {
 
   res
     .status(200)
-    .cookie("_cuid", _cuid, cookieOptionToken)
+    .cookie("_cuid", _cuid, cookieOption)
     .cookie("_cr", _cr, cookieOption)
-    .cookie("AUTHtoken", token, cookieOption)
+    .cookie("AUTHtoken", token, cookieOptionToken)
     .json({
       success: true,
       message: "Амжилттай нэвтэрлээ",
