@@ -109,7 +109,7 @@ exports.staffLogout = asyncHandler(async (req, res, next) => {
     .status(200)
     .cookie("_cuid", null, cookieOption)
     .cookie("_cr", null, cookieOption)
-    ..cookie("_AUTHtoken", token, cookieOption)
+    .cookie("_AUTHtoken", null, cookieOption)
     .cookie("AUTHtoken", null, cookieOptionToken)
     .json({
       success: true,
