@@ -3,6 +3,7 @@ const ErrorMsg = require("../../utils/ErrorMsg");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("../../utils/email");
 const crypto = require("crypto");
+const { pathToFileURL } = require("url");
 
 exports.staffLogin = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -63,9 +64,19 @@ exports.staffLogin = asyncHandler(async (req, res) => {
     expiresIn: process.env.JWT_EXPIRESIN,
   });
 
+  const cookieOptionToken = {
+    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    httpOnly: true,
+    domain: `${process.env.COOKIE_DOMAIN}`,
+    sameSite: "lax",
+    secure: true,
+  };
+
   const cookieOption = {
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     httpOnly: true,
+    sameSite: "lax",
+    secure: true,
   };
 
   res
@@ -73,6 +84,7 @@ exports.staffLogin = asyncHandler(async (req, res) => {
     .cookie("_cuid", _cuid, cookieOption)
     .cookie("_cr", _cr, cookieOption)
     .cookie("AUTHtoken", token, cookieOption)
+    .cookie("AUTHtoken", token, cookieOptionToken)
     .json({
       success: true,
       message: "Амжилттай нэвтэрлээ",
@@ -85,11 +97,20 @@ exports.staffLogout = asyncHandler(async (req, res, next) => {
     httpOnly: true,
   };
 
+  const cookieOptionToken = {
+    expires: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000),
+    httpOnly: true,
+    domain: `${process.env.COOKIE_DOMAIN}`,
+    sameSite: "lax",
+    secure: true,
+  };
+
   res
     .status(200)
     .cookie("_cuid", null, cookieOption)
     .cookie("_cr", null, cookieOption)
     .cookie("AUTHtoken", null, cookieOption)
+    .cookie("AUTHtoken", null, cookieOptionToken)
     .json({
       success: true,
       message: "Амжилттай",
