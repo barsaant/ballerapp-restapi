@@ -64,6 +64,14 @@ exports.staffLogin = asyncHandler(async (req, res) => {
     expiresIn: process.env.JWT_EXPIRESIN,
   });
 
+  const cookieOptionToken = {
+    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    httpOnly: true,
+    domain: `${process.env.COOKIE_DOMAIN}`,
+    sameSite: "lax",
+    secure: true,
+  };
+
   const cookieOption = {
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     httpOnly: true,
@@ -73,7 +81,7 @@ exports.staffLogin = asyncHandler(async (req, res) => {
 
   res
     .status(200)
-    .cookie("_cuid", _cuid, cookieOption)
+    .cookie("_cuid", _cuid, cookieOptionToken)
     .cookie("_cr", _cr, cookieOption)
     .cookie("AUTHtoken", token, cookieOption)
     .json({
