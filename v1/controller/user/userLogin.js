@@ -83,7 +83,7 @@ exports.staffLogin = asyncHandler(async (req, res) => {
     .status(200)
     .cookie("_cuid", _cuid, cookieOption)
     .cookie("_cr", _cr, cookieOption)
-    .cookie("_AUTHtoken", token, cookieOption)
+    .cookie("AUTHtoken", token, cookieOption)
     .cookie("AUTHtoken", token, cookieOptionToken)
     .json({
       success: true,
@@ -109,7 +109,7 @@ exports.staffLogout = asyncHandler(async (req, res, next) => {
     .status(200)
     .cookie("_cuid", null, cookieOption)
     .cookie("_cr", null, cookieOption)
-    .cookie("_AUTHtoken", null, cookieOption)
+    .cookie("AUTHtoken", null, cookieOption)
     .cookie("AUTHtoken", null, cookieOptionToken)
     .json({
       success: true,
