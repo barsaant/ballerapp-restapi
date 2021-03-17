@@ -28,7 +28,7 @@ const {
 
 const router = express.Router();
 
-router.route("  /posted").get(getPostedArticles);
+router.route("/posted").get(getPostedArticles);
 
 router
   .route("/saved")
