@@ -84,9 +84,6 @@ exports.staffLogin = asyncHandler(async (req, res) => {
     .cookie("_cuid", _cuid, cookieOption)
     .cookie("_cr", _cr, cookieOption)
     .cookie("AUTHtoken", token, cookieOption)
-    .cookie("_cuid", _cuid, cookieOptionToken)
-    .cookie("_cr", _cr, cookieOptionToken)
-    .cookie("AUTHtoken", token, cookieOptionToken)
     .json({
       success: true,
       message: "Амжилттай нэвтэрлээ",
@@ -114,9 +111,6 @@ exports.staffLogout = asyncHandler(async (req, res, next) => {
     .cookie("_cuid", null, cookieOption)
     .cookie("_cr", null, cookieOption)
     .cookie("AUTHtoken", null, cookieOption)
-    .cookie("_cuid", null, cookieOptionToken)
-    .cookie("_cr", null, cookieOptionToken)
-    .cookie("AUTHtoken", null, cookieOptionToken)
     .json({
       success: true,
       message: "Амжилттай",
