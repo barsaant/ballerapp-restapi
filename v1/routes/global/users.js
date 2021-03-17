@@ -1,4 +1,5 @@
 const express = require("express");
+const { protect, authorize } = require("../../middleware/protect");
 
 const {
   getUsers,
@@ -28,9 +29,16 @@ const {
 
 const router = express.Router();
 
-router.route("/").get(getUsers).post(createUserStaff);
+router
+  .route("/")
+  .get(protect, authorize("superadmin"), getUsers)
+  .post(protect, authorize("superadmin"), createUserStaff);
 
-router.route("/:id").get(getUser).put(updateUserStaff).delete(deleteUserStaff);
+router
+  .route("/:id")
+  .get(protect, authorize("superadmin"), getUser)
+  .put(protect, authorize("superadmin"), updateUserStaff)
+  .delete(protect, authorize("superadmin"), deleteUserStaff);
 
 router.route("/register").post(registerUser);
 

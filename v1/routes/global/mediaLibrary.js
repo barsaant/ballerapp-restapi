@@ -1,4 +1,5 @@
 const express = require("express");
+const { protect, authorize } = require("../../middleware/protect");
 
 const {
   getUploadFile,
@@ -9,8 +10,14 @@ const {
 
 const router = express.Router();
 
-router.route("/").get(getUploadFiles).post(createUploadFile);
+router
+  .route("/")
+  .get(protect, authorize("admin", "superadmin"), getUploadFiles)
+  .post(protect, authorize("admin", "superadmin"), createUploadFile);
 
-router.route("/:id").get(getUploadFile).delete(deleteUploadFile);
+router
+  .route("/:id")
+  .get(protect, authorize("admin", "superadmin"), getUploadFile)
+  .delete(protect, authorize("admin", "superadmin"), deleteUploadFile);
 
 module.exports = router;
