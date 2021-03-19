@@ -129,21 +129,21 @@ const importData = async () => {
 
     // sportHalls_tag
 
-    for (var i = 0; i < sportHalls_tag.length; i++) {
-      await db.sportHalls_tag.create(sportHalls_tag[i]);
-    }
+    // for (var i = 0; i < sportHalls_tag.length; i++) {
+    //   await db.sportHalls_tag.create(sportHalls_tag[i]);
+    // }
 
-    // rateSportHall
+    // // rateSportHall
 
-    for (var i = 0; i < rateSportHall.length; i++) {
-      await db.rateSportHall.create(rateSportHall[i]);
-    }
+    // for (var i = 0; i < rateSportHall.length; i++) {
+    //   await db.rateSportHall.create(rateSportHall[i]);
+    // }
 
-    // favoriteSportHall
+    // // favoriteSportHall
 
-    for (var i = 0; i < favoriteSportHall.length; i++) {
-      await db.favoriteSportHall.create(favoriteSportHall[i]);
-    }
+    // for (var i = 0; i < favoriteSportHall.length; i++) {
+    //   await db.favoriteSportHall.create(favoriteSportHall[i]);
+    // }
 
     // CategoryArticle
     for (var i = 0; i < categoryArticle.length; i++) {
@@ -168,17 +168,17 @@ const importData = async () => {
       await db.articles_category.create(articles_category[i]);
     }
 
-    // articles_tag
+    // // articles_tag
 
-    for (var i = 0; i < articles_tag.length; i++) {
-      await db.articles_tag.create(articles_tag[i]);
-    }
+    // for (var i = 0; i < articles_tag.length; i++) {
+    //   await db.articles_tag.create(articles_tag[i]);
+    // }
 
-    // favoriteArticle
+    // // favoriteArticle
 
-    for (var i = 0; i < favoriteArticle.length; i++) {
-      await db.favoriteArticle.create(favoriteArticle[i]);
-    }
+    // for (var i = 0; i < favoriteArticle.length; i++) {
+    //   await db.favoriteArticle.create(favoriteArticle[i]);
+    // }
 
     // MediaLibrary
 
@@ -186,17 +186,17 @@ const importData = async () => {
       await db.mediaLibrary.create(mediaLibrary[i]);
     }
 
-    // mediaLibrary_sportHalls
+    // // mediaLibrary_sportHalls
 
-    for (var i = 0; i < mediaLibrary_sportHalls.length; i++) {
-      await db.mediaLibrary_sportHalls.create(mediaLibrary_sportHalls[i]);
-    }
+    // for (var i = 0; i < mediaLibrary_sportHalls.length; i++) {
+    //   await db.mediaLibrary_sportHalls.create(mediaLibrary_sportHalls[i]);
+    // }
 
-    // mediaLibrary_articles
+    // // mediaLibrary_articles
 
-    for (var i = 0; i < mediaLibrary_articles.length; i++) {
-      await db.mediaLibrary_articles.create(mediaLibrary_articles[i]);
-    }
+    // for (var i = 0; i < mediaLibrary_articles.length; i++) {
+    //   await db.mediaLibrary_articles.create(mediaLibrary_articles[i]);
+    // }
 
     console.log("Дата-г хуулж дуусгалаа.");
   } catch (err) {

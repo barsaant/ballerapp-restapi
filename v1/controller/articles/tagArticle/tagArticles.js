@@ -44,7 +44,7 @@ exports.getTagArticles = asyncHandler(async (req, res) => {
     count = i + 1;
     pages = Math.ceil((i + 1) / limit);
   }
-  const tags = await req.db.tagAticle.findAll();
+  const tags = await req.db.tagArticle.findAll();
 
   res.status(200).json({
     success: true,
