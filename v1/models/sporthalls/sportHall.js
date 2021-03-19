@@ -64,12 +64,12 @@ module.exports = function (sequelize, DataTypes) {
       longitude: {
         type: DataTypes.STRING(100),
         allowNull: true,
-        defaultValue: " ",
+        defaultValue: "106.9176",
       },
       latitude: {
         type: DataTypes.STRING(100),
         allowNull: true,
-        defaultValue: " ",
+        defaultValue: "47.9189",
       },
       status: {
         type: DataTypes.ENUM("posted", "saved", "deleted"),
