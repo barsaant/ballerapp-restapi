@@ -158,15 +158,33 @@ exports.updateArticle = asyncHandler(async (req, res) => {
   });
 });
 
+exports.moveStatusArticle = asyncHandler(async (req, res) => {
+  let article = await req.db.article.findByPk(req.params.id);
+  if (!article) {
+    throw new ErrorMsg(`${req.params.id} ID-тай заал байхгүй байна!`, 404);
+  }
+
+  const { status } = req.body;
+
+  article.update({ status: status });
+
+  res.status(200).json({
+    success: true,
+    message: "Амжилттай устгалаа",
+  });
+});
+
 exports.deleteArticle = asyncHandler(async (req, res) => {
-  let article = req.db.article.findByPk(req.params.id);
+  let article = await req.db.article.findByPk(req.params.id);
 
   if (!article) {
     throw new ErrorMsg(`${req.params.id} ID-тай нийтлэл олдсонгүй.`, 400);
   }
 
-  await req.db.articles_category.destroy({ where: { hallId: req.params.id } });
-  await req.db.articles_tag.destroy({ where: { hallId: req.params.id } });
+  await req.db.articles_category.destroy({
+    where: { articleId: req.params.id },
+  });
+  await req.db.articles_tag.destroy({ where: { articleId: req.params.id } });
 
   await article.destroy();
 

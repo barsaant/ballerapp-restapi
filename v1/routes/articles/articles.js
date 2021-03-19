@@ -7,6 +7,7 @@ const {
   createArticle,
   updateArticle,
   deleteArticle,
+  moveStatusArticle,
 } = require("../../controller/articles/article/articles");
 
 const {
@@ -48,6 +49,10 @@ router
   .get(protect, authorize("admin", "superadmin"), getArticle)
   .put(protect, authorize("admin", "superadmin"), updateArticle)
   .delete(protect, authorize("admin", "superadmin"), deleteArticle);
+
+router
+  .route("/:id/delete")
+  .put(protect, authorize("admin", "superadmin"), moveStatusArticle);
 
 router
   .route("/:id/upload")
