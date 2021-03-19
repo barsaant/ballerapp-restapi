@@ -191,7 +191,7 @@ db.mediaLibrary.belongsToMany(db.article, {
 });
 
 db.sequelize
-  .sync()
+  .sync({ force: true })
   .then((result) => {
     console.log("");
   })
