@@ -1,5 +1,6 @@
 const asyncHandler = require("../../middleware/asyncHandler");
 const ErrorMsg = require("../../utils/ErrorMsg");
+const bcrypt = require("bcrypt");
 
 exports.getUsers = asyncHandler(async (req, res) => {
   const users = await req.db.user.findAll();
@@ -37,7 +38,13 @@ exports.createUserStaff = asyncHandler(async (req, res) => {
   if (uniqueMail) {
     throw new ErrorMsg(`${email} бүртгэгдсэн байна.`, 400);
   }
+
+  const salt = await bcrypt.genSalt(10);
+  const encryptPassword = await bcrypt.hash(password, salt);
+
   const user = await req.db.user.create(req.body);
+
+  user.update({ password: encryptPassword });
 
   res.status(200).json({
     success: true,
@@ -65,11 +72,14 @@ exports.updateUserStaff = asyncHandler(async (req, res) => {
     }
   }
 
-  if (password) {
-    await req.db.user.updatePassword(password);
-  }
-
   await user.update(req.body);
+  const encryptPassword = password;
+
+  if (password) {
+    const salt = await bcrypt.genSalt(10);
+    encryptPassword = await bcrypt.hash(password, salt);
+    await user.update({ password: encryptPassword });
+  }
 
   res.status(200).json({
     success: true,

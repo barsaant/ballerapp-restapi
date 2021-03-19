@@ -121,19 +121,19 @@ module.exports = function (sequelize, DataTypes) {
     }
   );
 
-  user.beforeCreate(async function (User) {
-    const salt = await bcrypt.genSalt(10);
-    User.password = await bcrypt.hash(User.password, salt);
-  });
+  // user.beforeCreate(async function (User) {
+  //   const salt = await bcrypt.genSalt(10);
+  //   User.password = await bcrypt.hash(User.password, salt);
+  // });
 
-  user.updatePassword = async function (password) {
-    if (password) {
-      user.beforeUpdate(async function (User) {
-        const salt = await bcrypt.genSalt(10);
-        User.password = await bcrypt.hash(password, salt);
-      });
-    }
-  };
+  // user.updatePassword = async function (password) {
+  //   if (password) {
+  //     user.beforeUpdate(async function (User) {
+  //       const salt = await bcrypt.genSalt(10);
+  //       User.password = await bcrypt.hash(password, salt);
+  //     });
+  //   }
+  // };
 
   user.checkPassword = async function (email, password) {
     const User = await user.findOne({ where: { email: email } });

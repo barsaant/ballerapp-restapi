@@ -40,7 +40,6 @@ module.exports = function (sequelize, DataTypes) {
           model: "district",
           key: "districtId",
         },
-        defaultValue: 1,
       },
       khorooId: {
         type: DataTypes.INTEGER,
@@ -49,7 +48,6 @@ module.exports = function (sequelize, DataTypes) {
           model: "khoroo",
           key: "khorooId",
         },
-        defaultValue: 1,
       },
       address: {
         type: DataTypes.TEXT,
