@@ -54,6 +54,16 @@ module.exports = function (sequelize, DataTypes) {
         allowNull: true,
         defaultValue: " ",
       },
+      lockerRoom: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+        defaultValue: false,
+      },
+      halfPrice: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: 0,
+      },
       price: {
         type: DataTypes.INTEGER,
         allowNull: true,

@@ -5,9 +5,9 @@ const jwt = require("jsonwebtoken");
 const user = require("../../models/global/user");
 
 exports.registerUser = asyncHandler(async (req, res) => {
-  const { firstName, lastName, email, password } = req.body;
+  const { firstName, lastName, email, password, birthDay, gender } = req.body;
 
-  if (!firstName || !lastName || !email || !password) {
+  if (!firstName || !lastName || !email || !password || !birthDay || !gender) {
     throw new ErrorMsg(`Талбарыг гүйцэт бөглөнө үү`, 400);
   }
 
@@ -16,6 +16,7 @@ exports.registerUser = asyncHandler(async (req, res) => {
   if (uniqueMail) {
     throw new ErrorMsg(`Бүртгэгдсэн Email хаяг байна.`, 400);
   }
+
   const randomDigit = Math.floor(100000 + Math.random() * 900000);
 
   const expireDate = Date.now() + 10 * 60 * 1000;
@@ -32,14 +33,21 @@ exports.registerUser = asyncHandler(async (req, res) => {
     message,
   });
 
+  const salt = await bcrypt.genSalt(10);
+  const encryptPassword = await bcrypt.hash(password, salt);
+
   const newUser = await req.db.user.create({
     fistName: firstName,
     lastName: lastName,
     email: email,
     password: password,
+    birthDay: birthDay,
+    gender: gender,
     emailVerificationCode: randomDigit,
     emailVerificationCodeExpire: expireDate,
   });
+
+  newUser.update({ password: encryptPassword });
 
   res.status(200).json({
     success: true,
@@ -67,11 +75,12 @@ exports.updateCommonUser = asyncHandler(async (req, res) => {
 
   let user = await req.db.user.findByPk(req.params.id);
 
-  const { firstName, lastName, password } = req.body;
+  const { firstName, lastName, password, birthDay, gender } = req.body;
 
   if (password) {
-    await req.db.user.updatePassword(password);
-    await user.update({ password: password });
+    const salt = await bcrypt.genSalt(10);
+    const encryptPassword = await bcrypt.hash(password, salt);
+    await user.update({ password: encryptPassword });
   }
 
   if (firstName) {
@@ -81,6 +90,15 @@ exports.updateCommonUser = asyncHandler(async (req, res) => {
   if (lastName) {
     await user.update({ lastName: lastName });
   }
+
+  if (birthDay) {
+    await user.update({ birthDay: birthDay });
+  }
+
+  if (gender) {
+    await user.update({ gender: gender });
+  }
+
   res.status(200).json({
     success: true,
     message: "Амжилттай",
@@ -160,8 +178,6 @@ exports.updateCommonUserEmail = asyncHandler(async (req, res) => {
     if (!user) {
       throw new ErrorMsg("Алдаа гарлаа", 401);
     }
-
-
 
   if (Date.parse(user.emailChangeVerificationExpire) < Date.now()) {
     user.update({ emailChangeVerificationCode: null });

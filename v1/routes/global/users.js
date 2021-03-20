@@ -32,7 +32,7 @@ const router = express.Router();
 router
   .route("/")
   .get(protect, authorize("superadmin"), getUsers)
-  .post(createUserStaff);
+  .post(protect, authorize("superadmin"), createUserStaff);
 
 router
   .route("/:id")
