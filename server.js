@@ -18,6 +18,7 @@ const sportHallRoute = require("./v1/routes/halls/sportHalls");
 const tagRoute = require("./v1/routes/halls/tagSportHalls");
 const favoriteHallRoute = require("./v1/routes/halls/favoriteSportHalls");
 const rateSportHallRoute = require("./v1/routes/halls/rateSportHalls");
+const orderSportHallRoute = require("./v1/routes/halls/orderSportHalls");
 const articleRoute = require("./v1/routes/articles/articles");
 const categoryArticleRoute = require("./v1/routes/articles/categoryArticles");
 const tagArticleRoute = require("./v1/routes/articles/tagArticles");
@@ -62,6 +63,7 @@ server.use(`${process.env.ROUTE}/sporthalls/`, sportHallRoute);
 server.use(`${process.env.ROUTE}/ratesporthall/`, rateSportHallRoute);
 server.use(`${process.env.ROUTE}/tagshalls/`, tagRoute);
 server.use(`${process.env.ROUTE}/favoritehalls/`, favoriteHallRoute);
+server.use(`${process.env.ROUTE}/orderhalls/`, orderSportHallRoute);
 server.use(`${process.env.ROUTE}/articles/`, articleRoute);
 server.use(`${process.env.ROUTE}/categories/`, categoryArticleRoute);
 server.use(`${process.env.ROUTE}/tagarticles/`, tagArticleRoute);
@@ -115,6 +117,38 @@ db.sportHall.belongsToMany(db.user, {
   through: db.favoriteSportHall,
   foreignKey: "hallId",
   otherKey: "userId",
+});
+
+db.user.belongsToMany(db.sportHall, {
+  through: db.operatorSportHall,
+  foreignKey: "userId",
+  otherKey: "hallId",
+});
+
+db.sportHall.belongsToMany(db.user, {
+  through: db.operatorSportHall,
+  foreignKey: "hallId",
+  otherKey: "userId",
+});
+
+db.user.belongsToMany(db.orderSportHall, {
+  through: db.orderOpSportHall,
+  foreignKey: "userId",
+  otherKey: "orderId",
+});
+
+db.orderSportHall.belongsToMany(db.user, {
+  through: db.orderOpSportHall,
+  foreignKey: "orderId",
+  otherKey: "userId",
+});
+
+db.sportHall.hasMany(db.scheduleSportHall, {
+  foreignKey: "hallId",
+});
+
+db.sportHall.hasMany(db.orderedScheduleSportHall, {
+  foreignKey: "hallId",
 });
 
 db.sportHall.belongsTo(db.district, {

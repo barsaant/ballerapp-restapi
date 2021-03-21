@@ -63,6 +63,8 @@ exports.getSportHalls = asyncHandler(async (req, res) => {
 
   const sportHalls = await req.db.sportHall.findAll(query);
 
+  console.log(user);
+
   res.status(200).json({
     success: true,
     count,
@@ -77,10 +79,53 @@ exports.getSportHall = asyncHandler(async (req, res) => {
   if (!sportHall) {
     throw new ErrorMsg(req.params.id + " ID-тай заал байхгүй байна.", 404);
   }
+
+  const user = await req.db.operatorSportHall.findOne({
+    where: { hallId: req.params.id },
+  });
+
+  const {
+    hallId,
+    title,
+    thumbnail,
+    images,
+    phone,
+    districtId,
+    khorooid,
+    address,
+    lockerRoom,
+    halfPrice,
+    price,
+    longitude,
+    latitude,
+    status,
+    rating,
+    tagSportHalls,
+  } = sportHall;
+
+  const { userId } = user;
   res.status(200).json({
     success: true,
     message: "Амжилттай",
-    sportHall,
+    sportHall: {
+      hallId,
+      title,
+      thumbnail,
+      images,
+      phone,
+      districtId,
+      khorooid,
+      address,
+      lockerRoom,
+      halfPrice,
+      price,
+      longitude,
+      latitude,
+      status,
+      rating,
+      tagSportHalls,
+      userId,
+    },
   });
 });
 
@@ -115,7 +160,7 @@ exports.updateSportHall = asyncHandler(async (req, res) => {
   if (!sportHall) {
     throw new ErrorMsg(`${req.params.id} ID-тай заал байхгүй байна!`, 404);
   }
-  const { khorooId, districtId, tagId } = req.body;
+  const { khorooId, districtId, tagId, userId } = req.body;
 
   const khorooIdCheck = await req.db.khoroo.findOne({
     where: { khorooId: khorooId },
@@ -135,6 +180,8 @@ exports.updateSportHall = asyncHandler(async (req, res) => {
 
   await req.db.sportHalls_tag.destroy({ where: { hallId: req.params.id } });
 
+  await req.db.operatorSportHall.destroy({ where: { hallId: req.params.id } });
+
   await sportHall.update(req.body);
 
   if (tagId) {
@@ -150,6 +197,19 @@ exports.updateSportHall = asyncHandler(async (req, res) => {
     }
   }
 
+  if (userId) {
+    for (var i = 0; i < userId.length; i++) {
+      const userIdCheck = await req.db.user.findByPk(userId[i]);
+      if (!userIdCheck) {
+        throw new ErrorMsg(`${userId} ID-тай хэрэглэгч байхгүй байна!`, 404);
+      }
+      await req.db.operatorSportHall.create({
+        hallId: req.params.id,
+        userId: userId[i],
+      });
+    }
+  }
+
   const sportHallWithTag = await req.db.sportHall.findByPk(
     req.params.id,
     tagJson
@@ -158,7 +218,8 @@ exports.updateSportHall = asyncHandler(async (req, res) => {
   res.status(200).json({
     success: true,
     message: "Амжилттай",
-    sportHallWithTag,
+    // sportHallWithTag,
+    // userId,
   });
 });
 

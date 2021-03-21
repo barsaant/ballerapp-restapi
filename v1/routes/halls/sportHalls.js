@@ -27,6 +27,17 @@ const {
   getDeletedSportHalls,
 } = require("../../controller/halls/sportHall/deletedSportHalls");
 
+const {
+  getSportHallStaff,
+  updateSportHallStaff,
+  getScheduleSportHall,
+  createScheduleSportHall,
+} = require("../../controller/halls/sportHall/sportHallsStaff");
+
+const {
+  createOrderSportHall,
+} = require("../../controller/halls/sportHall/orderSportHalls");
+
 const router = express.Router();
 
 router
@@ -58,5 +69,12 @@ router
   .route("/:id/upload")
   .post(protect, authorize("admin", "superadmin"), createHallsUploadFile)
   .get(protect, authorize("admin", "superadmin"), getHallsUploadFiles);
+
+router
+  .route("/:id/schedule")
+  .get(getScheduleSportHall)
+  .post(createScheduleSportHall);
+
+router.route("/:id/order").post(createOrderSportHall);
 
 module.exports = router;
