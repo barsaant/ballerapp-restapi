@@ -1,7 +1,17 @@
 module.exports = function (sequelize, DataTypes) {
   return sequelize.define(
-    "orderOpSportHall",
+    "payRequestSportHall",
     {
+      userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      orderName: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+      },
       userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -11,38 +21,47 @@ module.exports = function (sequelize, DataTypes) {
           key: "userId",
         },
       },
-      orderId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        primaryKey: true,
-        references: {
-          model: "orderSportHall",
-          key: "orderId",
-        },
-      },
       hallId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
         references: {
-          model: "orderSportHall",
+          model: "sportHall",
           key: "hallId",
         },
       },
-      status: {
-        type: DataTypes.ENUM("confirmed", "unconfirmed"),
-        allowNull: true,
-        defaultValue: "unconfirmed",
+      date: {
+        type: DataTypes.DATE,
+        allowNull: false,
       },
-      paid: {
-        type: DataTypes.ENUM("paid", "pending", "unpaid"),
-        allowNull: true,
-        defaultValue: "unpaid",
+      duration: {
+        type: DataTypes.DECIMAL(10, 1),
+        allowNull: false,
+      },
+      endDate: {
+        type: DataTypes.DATE,
+        allowNull: false,
       },
       price: {
         type: DataTypes.INTEGER,
-        allowNull: true,
+        allowNull: false,
         defaultValue: 0,
+      },
+      condition: {
+        type: DataTypes.ENUM("halfcourt", "fullcourt"),
+        allowNull: false,
+      },
+      status: {
+        type: DataTypes.ENUM("confirmed", "unconfirmed"),
+        defaultValue: "unconfirmed",
+      },
+      orderPass: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+      },
+      orderToken: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
       },
       createdAt: {
         type: DataTypes.DATE,
@@ -55,19 +74,19 @@ module.exports = function (sequelize, DataTypes) {
     },
     {
       sequelize,
-      tableName: "orderOpSportHall",
+      tableName: "payRequestSportHall",
       timestamps: true,
       indexes: [
         {
           name: "PRIMARY",
           unique: true,
           using: "BTREE",
-          fields: [{ name: "userId" }, { name: "orderId" }, { name: "hallId" }],
+          fields: [{ name: "orderId" }, { name: "userId" }, { name: "hallId" }],
         },
         {
-          name: "orderId",
+          name: "hallId",
           using: "BTREE",
-          fields: [{ name: "orderId" }],
+          fields: [{ name: "hallId" }],
         },
       ],
     }

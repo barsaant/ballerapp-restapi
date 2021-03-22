@@ -27,6 +27,11 @@ const {
   updateLoginEmail,
 } = require("../../controller/user/userLogin");
 
+// Хэрэглэгчийн түрээсэлсэн заалны түүхүүд
+const {
+  getOrderSportHalls,
+} = require("../../controller/halls/sportHall/orderSportHalls");
+
 const router = express.Router();
 
 router
@@ -39,6 +44,8 @@ router
   .get(protect, authorize("superadmin"), getUser)
   .put(protect, authorize("superadmin"), updateUserStaff)
   .delete(protect, authorize("superadmin"), deleteUserStaff);
+
+router.route("/:id/orderhalls").get(getOrderSportHalls);
 
 router.route("/register").post(registerUser);
 

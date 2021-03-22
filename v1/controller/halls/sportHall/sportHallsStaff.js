@@ -100,10 +100,17 @@ exports.getScheduleSportHall = asyncHandler(async (req, res) => {
     where: { hallId: req.params.id },
   });
 
+  const orderedScheduleSportHall = await req.db.orderedScheduleSportHall.findAll(
+    {
+      where: { hallId: req.params.id },
+    }
+  );
+
   res.status(200).json({
     success: true,
     message: "Амжилттай",
     scheduleSportHall,
+    orderedScheduleSportHall,
   });
 });
 

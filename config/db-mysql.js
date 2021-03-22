@@ -35,6 +35,7 @@ const sequelize = new Sequelize(
 );
 const models = [
   require("../v1/models/global/user"),
+  require("../v1/models/global/userBankAccount"),
   require("../v1/models/global/mediaLibrary"),
   require("../v1/models/sporthalls/district"),
   require("../v1/models/sporthalls/khoroo"),

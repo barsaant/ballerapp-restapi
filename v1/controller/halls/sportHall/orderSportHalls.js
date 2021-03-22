@@ -91,6 +91,22 @@ exports.createOrderSportHall = asyncHandler(async (req, res) => {
   console.log(encryptedOrderName);
   console.log(bcryptOrderName);
 
+  // OrderOpSportHall дотор шинээр хүсэлт үүсгэх
+
+  // Үнийг нь авах
+  let orderPrice = 0;
+  console.log(condition);
+  condition == "halfcourt"
+    ? (orderPrice = sportHall.halfPrice)
+    : (orderPrice = sportHall.price);
+
+  await req.db.orderOpSportHall.create({
+    orderId: order.orderId,
+    hallId: req.params.id,
+    userId: operator.userId,
+    price: orderPrice,
+  });
+
   res.status(200).json({
     success: true,
     message: "Амжилттай",
@@ -105,10 +121,17 @@ exports.confirmOrderSportHall = asyncHandler(async (req, res) => {
     throw new ErrorMsg(`${req.params.id} ID-тай хүсэлт үүсээгүй байна.`, 400);
   }
 
+  const orderOp = await req.db.orderOpSportHall.findOne({
+    where: { orderId: req.params.id },
+  });
+
   const { orderPass, userId } = req.body;
 
-  if (order.userId !== userId) {
-    throw new ErrorMsg(`${req.params.id} таны хүсэлт амжилтгүй боллоо.`, 400);
+  if (order.userId.toString() !== userId) {
+    throw new ErrorMsg(
+      `${req.params.id} ID-тай хэрэглэгч таны хүсэлт амжилтгүй боллоо.`,
+      400
+    );
   }
 
   if (order.status == "confirmed") {
@@ -128,11 +151,47 @@ exports.confirmOrderSportHall = asyncHandler(async (req, res) => {
     throw new ErrorMsg(`Таны хүсэлт амжилтгүй боллоо.`, 400);
   }
 
-  order.update({ status: "confirmed" });
+  const orderToken = crypto.randomBytes(25).toString("hex");
 
+  await order.update({ status: "confirmed", orderToken: orderToken });
+  await orderOp.update({ status: "confirmed" });
   res.status(200).json({
     success: true,
     message: "Амжилттай баталгаажлаа.",
+    order,
+  });
+});
+
+exports.getOrderSportHalls = asyncHandler(async (req, res) => {
+  const user = await req.db.user.findByPk(req.params.id);
+
+  if (!user) {
+    throw new ErrorMsg(`Хэрэглэгч олдсонгүй`, 404);
+  }
+
+  const orders = await req.db.orderSportHall.findAll({
+    where: { userId: req.params.id },
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Амжилттай",
+    orders,
+  });
+});
+
+exports.getOrderSportHall = asyncHandler(async (req, res) => {
+  const order = await req.db.orderSportHall.findOne({
+    where: { orderId: req.params.id },
+  });
+
+  if (!order) {
+    throw new ErrorMsg(`${req.params.id} ID-тай хүсэлт үүсээгүй байна.`, 400);
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "Амжилттай",
     order,
   });
 });

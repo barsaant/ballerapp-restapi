@@ -143,6 +143,16 @@ db.orderSportHall.belongsToMany(db.user, {
   otherKey: "userId",
 });
 
+db.user.hasMany(db.userBankAccount, {
+  foreignKey: "hallId",
+});
+
+db.userBankAccount.belongsTo(db.user, {
+  foreignKey: "khorooId",
+  onDelete: "cascade",
+  onUpdate: "cascade",
+});
+
 db.sportHall.hasMany(db.scheduleSportHall, {
   foreignKey: "hallId",
 });
