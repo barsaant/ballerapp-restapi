@@ -36,7 +36,7 @@ var whitelist = [
 
 var corsOptions = {
   origin: function (origin, callback) {
-    // console.log(origin);
+    console.log(origin);
     if (origin === undefined || whitelist.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
@@ -144,11 +144,11 @@ db.orderSportHall.belongsToMany(db.user, {
 });
 
 db.user.hasMany(db.userBankAccount, {
-  foreignKey: "hallId",
+  foreignKey: "userId",
 });
 
 db.userBankAccount.belongsTo(db.user, {
-  foreignKey: "khorooId",
+  foreignKey: "userId",
   onDelete: "cascade",
   onUpdate: "cascade",
 });

@@ -2,15 +2,11 @@ module.exports = function (sequelize, DataTypes) {
   return sequelize.define(
     "payRequestSportHall",
     {
-      userId: {
+      reqId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true,
-      },
-      orderName: {
-        type: DataTypes.STRING(100),
-        allowNull: true,
       },
       userId: {
         type: DataTypes.INTEGER,
@@ -21,46 +17,20 @@ module.exports = function (sequelize, DataTypes) {
           key: "userId",
         },
       },
-      hallId: {
+      amount: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        primaryKey: true,
-        references: {
-          model: "sportHall",
-          key: "hallId",
-        },
       },
       date: {
         type: DataTypes.DATE,
         allowNull: false,
       },
-      duration: {
-        type: DataTypes.DECIMAL(10, 1),
-        allowNull: false,
-      },
-      endDate: {
-        type: DataTypes.DATE,
-        allowNull: false,
-      },
-      price: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0,
-      },
-      condition: {
-        type: DataTypes.ENUM("halfcourt", "fullcourt"),
-        allowNull: false,
-      },
       status: {
-        type: DataTypes.ENUM("confirmed", "unconfirmed"),
-        defaultValue: "unconfirmed",
+        type: DataTypes.ENUM("paid", "pending"),
+        defaultValue: "pending",
       },
-      orderPass: {
-        type: DataTypes.STRING(100),
-        allowNull: true,
-      },
-      orderToken: {
-        type: DataTypes.STRING(100),
+      paidAt: {
+        type: DataTypes.DATE,
         allowNull: true,
       },
       createdAt: {

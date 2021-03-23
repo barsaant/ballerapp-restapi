@@ -63,6 +63,10 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.STRING(100),
         allowNull: true,
       },
+      confirmedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
       createdAt: {
         type: DataTypes.DATE,
         allowNull: false,

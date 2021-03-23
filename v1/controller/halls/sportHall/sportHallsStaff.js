@@ -121,8 +121,13 @@ exports.createScheduleSportHall = asyncHandler(async (req, res) => {
   if (!sportHall) {
     throw new ErrorMsg(`${req.params.id} ID-тай заал байхгүй байна!`, 404);
   }
+  const sportHallDate = await req.db.scheduleSportHall.findAll({
+    where: { hallId: req.params.id },
+  });
 
-  console.log(date);
+  for (var i = 0; i < sportHallDate.length; i++) {
+    await sportHallDate[i].destroy();
+  }
 
   for (var i = 0; i < date.length; i++) {
     const checkDate = await req.db.scheduleSportHall.findOne({

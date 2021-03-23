@@ -200,8 +200,9 @@ exports.loginUser = asyncHandler(async (req, res) => {
   const emailVerified = user.emailVerified;
   if (user.emailVerified == "false") {
     res.status(200).json({
-      success: false,
+      success: true,
       message: "Email-ээ баталгаажуулна уу!",
+      emailVerified: false,
       userId,
       emailVerified,
     });

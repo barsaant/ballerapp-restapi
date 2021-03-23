@@ -10,13 +10,14 @@ exports.createUserBankAccount = asyncHandler(async (req, res) => {
 
   const { bankName, bankAccount, accountName } = req.body;
 
-  if (!bankName || !bankAccount || accountName) {
+  if (!bankName || !bankAccount || !accountName) {
     throw new ErrorMsg(`Талбарыг гүйцэт бөглөнө үү!`, 404);
   }
 
   const userBankAccount = await req.db.userBankAccount.create({
+    userId: req.params.id,
     bankName: bankName,
-    bankAcoount: bankAccount,
+    bankAccount: bankAccount,
     accountName: accountName,
   });
 
@@ -34,5 +35,81 @@ exports.getUserBankAccount = asyncHandler(async (req, res) => {
     throw new ErrorMsg(`Хэрэглэгч олдсонгүй!`, 404);
   }
 
-  const userBankAccount = await req.db.userBankAccount(async(req, res));
+  const userBankAccount = await req.db.userBankAccount.findAll({
+    where: { userId: req.params.id },
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Амжилттай",
+    userBankAccount,
+  });
+});
+
+exports.updateUserBankAccount = asyncHandler(async (req, res) => {
+  let userBankAccount = await req.db.userBankAccount.findByPk(req.params.accid);
+
+  if (!userBankAccount) {
+    throw new ErrorMsg(`Банкны данс олдсонгүй!`, 404);
+  }
+
+  const { bankName, bankAccount, accountName } = req.body;
+
+  if (!bankName || !bankAccount || !accountName) {
+    throw new ErrorMsg(`Талбарыг гүйцэт бөглөнө үү!`, 404);
+  }
+
+  await userBankAccount.update({
+    bankName: bankName,
+    bankAccount: bankAccount,
+    accountName: accountName,
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Амжилттай",
+    userBankAccount,
+  });
+});
+
+exports.updateUserBankAccount = asyncHandler(async (req, res) => {
+  let userBankAccount = await req.db.userBankAccount.findByPk(req.params.accid);
+
+  if (!userBankAccount) {
+    throw new ErrorMsg(`Банкны данс олдсонгүй!`, 404);
+  }
+
+  const { bankName, bankAccount, accountName } = req.body;
+
+  if (!bankName || !bankAccount || !accountName) {
+    throw new ErrorMsg(`Талбарыг гүйцэт бөглөнө үү!`, 404);
+  }
+
+  await userBankAccount.update({
+    bankName: bankName,
+    bankAccount: bankAccount,
+    accountName: accountName,
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Амжилттай",
+    userBankAccount,
+  });
+});
+
+exports.deleteUserBankAccount = asyncHandler(async (req, res) => {
+  let userBankAccount = await req.db.userBankAccount.findByPk(req.params.accid);
+
+  if (!userBankAccount) {
+    throw new ErrorMsg(`Банкны данс олдсонгүй!`, 404);
+  }
+
+  await userBankAccount.destroy();
+
+  res.status(200).json({
+    success: true,
+    message: "Амжилттай устгалаа.",
+    userBankAccount,
+  });
 });

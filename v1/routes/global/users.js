@@ -27,10 +27,20 @@ const {
   updateLoginEmail,
 } = require("../../controller/user/userLogin");
 
+const {
+  getUserBankAccount,
+  createUserBankAccount,
+  updateUserBankAccount,
+  deleteUserBankAccount,
+} = require("../../controller/user/userBankAccount");
+
 // Хэрэглэгчийн түрээсэлсэн заалны түүхүүд
 const {
   getOrderSportHalls,
 } = require("../../controller/halls/sportHall/orderSportHalls");
+const {
+  updateSportHallStaff,
+} = require("../../controller/halls/sportHall/sportHallsStaff");
 
 const router = express.Router();
 
@@ -70,5 +80,17 @@ router
   .get(updateCommonUserCurrentEmail)
   .post(updateCommonUserEmail)
   .put(updateCommonEmail);
+
+router
+  .route("/:id/payments")
+  .get(getUserBankAccount)
+  .post(createUserBankAccount);
+
+router
+  .route("/:id/payments/:accid")
+  .put(updateUserBankAccount)
+  .delete(deleteUserBankAccount);
+
+router.route("/:id");
 
 module.exports = router;

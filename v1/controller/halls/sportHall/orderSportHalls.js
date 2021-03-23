@@ -152,9 +152,14 @@ exports.confirmOrderSportHall = asyncHandler(async (req, res) => {
   }
 
   const orderToken = crypto.randomBytes(25).toString("hex");
+  const confirmedAt = Date.now();
 
-  await order.update({ status: "confirmed", orderToken: orderToken });
-  await orderOp.update({ status: "confirmed" });
+  await order.update({
+    status: "confirmed",
+    orderToken: orderToken,
+    confirmedAt: confirmedAt,
+  });
+  await orderOp.update({ status: "confirmed", confirmedAt: confirmedAt });
   res.status(200).json({
     success: true,
     message: "Амжилттай баталгаажлаа.",
