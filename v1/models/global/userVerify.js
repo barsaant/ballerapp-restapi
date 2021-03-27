@@ -8,18 +8,6 @@ module.exports = function (sequelize, DataTypes) {
         primaryKey: true,
         autoIncrement: true,
       },
-      facebookCode: {
-        type: DataTypes.STRING(100),
-        allowNull: true,
-      },
-      facebookCodeExpire: {
-        type: DataTypes.DATE,
-        allowNull: true,
-      },
-      facebookToken: {
-        type: DataTypes.STRING(255),
-        allowNull: true,
-      },
       emailVerified: {
         type: DataTypes.ENUM("true", "false"),
         allowNull: false,
