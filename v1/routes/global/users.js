@@ -38,9 +38,15 @@ const {
 const {
   getOrderSportHalls,
 } = require("../../controller/halls/sportHall/orderSportHalls");
+
 const {
   updateSportHallStaff,
 } = require("../../controller/halls/sportHall/sportHallsStaff");
+
+const {
+  facebookLogin,
+  googleLogin,
+} = require("../../controller/user/userSocial");
 
 const router = express.Router();
 
@@ -90,6 +96,9 @@ router
   .route("/:id/payments/:accid")
   .put(updateUserBankAccount)
   .delete(deleteUserBankAccount);
+
+router.route("/social/facebook").post(facebookLogin);
+router.route("/social/google").post(googleLogin);
 
 router.route("/:id");
 

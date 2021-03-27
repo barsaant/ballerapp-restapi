@@ -11,12 +11,8 @@ module.exports = function (sequelize, DataTypes) {
         primaryKey: true,
         autoIncrement: true,
       },
-      firstname: {
-        type: DataTypes.STRING(40),
-        allowNull: true,
-      },
-      lastname: {
-        type: DataTypes.STRING(40),
+      name: {
+        type: DataTypes.STRING(60),
         allowNull: true,
       },
       password: {
@@ -60,44 +56,6 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.ENUM("true", "false"),
         allowNull: false,
         defaultValue: "false",
-      },
-      emailChangeVerified: {
-        type: DataTypes.ENUM("true", "false"),
-        allowNull: false,
-        defaultValue: "false",
-      },
-      emailChangeVerifiedExpire: {
-        type: DataTypes.DATE,
-      },
-      emailChangeVerificationCode: {
-        type: DataTypes.STRING(6),
-      },
-      emailChangeVerificationExpire: {
-        type: DataTypes.DATE,
-      },
-      emailVerificationCode: {
-        type: DataTypes.STRING(6),
-      },
-      emailVerificationCodeExpire: {
-        type: DataTypes.DATE,
-      },
-      phoneChangeVerificationCode: {
-        type: DataTypes.STRING(6),
-      },
-      phoneChangeVerificationExpire: {
-        type: DataTypes.DATE,
-      },
-      phoneVerificationCode: {
-        type: DataTypes.STRING(6),
-      },
-      phoneVerificationCodeExpire: {
-        type: DataTypes.DATE,
-      },
-      resetPasswordCode: {
-        type: DataTypes.STRING(6),
-      },
-      resetPasswordExpire: {
-        type: DataTypes.DATE,
       },
       createdAt: {
         type: DataTypes.DATE,

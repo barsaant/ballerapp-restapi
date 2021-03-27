@@ -1,29 +1,63 @@
 const asyncHandler = require("../../middleware/asyncHandler");
 const ErrorMsg = require("../../utils/ErrorMsg");
 const sendEmail = require("../../utils/email");
+const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
-const user = require("../../models/global/user");
+const bcrypt = require("bcrypt");
 
 exports.registerUser = asyncHandler(async (req, res) => {
-  const { firstName, lastName, email, password, birthDay, gender } = req.body;
+  const { firstName, email, password } = req.body;
 
-  if (!firstName || !lastName || !email || !password || !birthDay || !gender) {
+  console.log(firstName);
+
+  if (!firstName && !email && !password) {
     throw new ErrorMsg(`Талбарыг гүйцэт бөглөнө үү`, 400);
   }
 
   const uniqueMail = await req.db.user.findOne({ where: { email: email } });
 
   if (uniqueMail) {
-    throw new ErrorMsg(`Бүртгэгдсэн Email хаяг байна.`, 400);
+    throw new ErrorMsg(`Бүртгэгдсэн И-мэйл хаяг байна.`, 400);
   }
 
-  const randomDigit = Math.floor(100000 + Math.random() * 900000);
+  const randomToken = crypto.randomBytes(25).toString("hex");
 
   const expireDate = Date.now() + 10 * 60 * 1000;
 
+  const salt = await bcrypt.genSalt(10);
+  const encryptPassword = await bcrypt.hash(password, salt);
+
+  const newUser = await req.db.user.create({
+    fistName: firstName,
+    email: email,
+    password: password,
+  });
+
+  await newUser.update({ password: encryptPassword });
+  const { userId, role } = newUser;
+
+  await req.db.userVerify.create({
+    userId: userId,
+    emailVerificationCode: randomToken,
+    emailVerificationCodeExpire: expireDate,
+  });
+
+  const encryptUserId = (userId) => {
+    var cipher = crypto.createCipher(
+      process.env.EN_ALGORITHM,
+      process.env.EN_PASSWORD
+    );
+    var crypted = cipher.update(userId, "utf8", "hex");
+    crypted += cipher.final("hex");
+    return crypted;
+  };
+
+  const _cu = encryptUserId(`${userId}`);
+  const _cr = encryptUserId(`${role}`);
+
   const message = `
   Сайн байна уу? <br><br>
-  Таны Email баталгаажуулах код: ${randomDigit} <br><br>
+  Таны Email баталгаажуулах код: <a href="https://verify.baller.mn/${randomToken}">Энд дарж И-мэйлээ баталгаажуулна уу! </a> <br><br>
   Баталгаажуулах код 10 минут хүчинтэй.
   `;
 
@@ -33,26 +67,11 @@ exports.registerUser = asyncHandler(async (req, res) => {
     message,
   });
 
-  const salt = await bcrypt.genSalt(10);
-  const encryptPassword = await bcrypt.hash(password, salt);
-
-  const newUser = await req.db.user.create({
-    fistName: firstName,
-    lastName: lastName,
-    email: email,
-    password: password,
-    birthDay: birthDay,
-    gender: gender,
-    emailVerificationCode: randomDigit,
-    emailVerificationCodeExpire: expireDate,
-  });
-
-  newUser.update({ password: encryptPassword });
-
   res.status(200).json({
     success: true,
     message: "Амжилттай",
-    newUser,
+    _cu,
+    _cr,
   });
 });
 

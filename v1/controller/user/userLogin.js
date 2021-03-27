@@ -32,20 +32,20 @@ exports.staffLogin = asyncHandler(async (req, res) => {
     throw new ErrorMsg("Танд нэвтрэх эрх байхгүй байна", 401);
   }
 
-  const algorithm = "aes-256-ctr";
-  const enpassword = "Rp9Y}V>Qh.>(2u9X";
-
   const tkpassword = "?,-FzZUgZ5<[`~+U";
 
   const encryptUserId = (userId) => {
-    var cipher = crypto.createCipher(algorithm, enpassword);
+    var cipher = crypto.createCipher(
+      process.env.EN_ALGORITHM,
+      process.env.EN_PASSWORD
+    );
     var crypted = cipher.update(userId, "utf8", "hex");
     crypted += cipher.final("hex");
     return crypted;
   };
 
   const encryptToken = (userId) => {
-    var cipher = crypto.createCipher(algorithm, tkpassword);
+    var cipher = crypto.createCipher(process.env.EN_ALGORITHM, tkpassword);
     var crypted = cipher.update(userId, "utf8", "hex");
     crypted += cipher.final("hex");
     return crypted;
@@ -128,12 +128,13 @@ exports.checkLogin = asyncHandler(async (req, res, next) => {
     throw new ErrorMsg("Та нэвтэрнэ үү!", 401);
   }
 
-  const algorithm = "aes-256-ctr";
-  const enpassword = "Rp9Y}V>Qh.>(2u9X";
   const tkpassword = "?,-FzZUgZ5<[`~+U";
 
   const decryptUserId = (encrypted) => {
-    var decipher = crypto.createDecipher(algorithm, enpassword);
+    var decipher = crypto.createDecipher(
+      process.env.EN_ALGORITHM,
+      process.env.EN_PASSWORD
+    );
     var dec = decipher.update(encrypted, "hex", "utf8");
     dec += decipher.final("utf8");
     return dec;
@@ -143,7 +144,7 @@ exports.checkLogin = asyncHandler(async (req, res, next) => {
   const urole = decryptUserId(_cr);
 
   const decryptToken = (encrypted) => {
-    var decipher = crypto.createDecipher(algorithm, tkpassword);
+    var decipher = crypto.createDecipher(process.env.EN_ALGORITHM, tkpassword);
     var dec = decipher.update(encrypted, "hex", "utf8");
     dec += decipher.final("utf8");
     return dec;
@@ -172,68 +173,48 @@ exports.checkLogin = asyncHandler(async (req, res, next) => {
     throw new ErrorMsg("Та дахин нэвтэрнэ үү!", 401);
   }
 
+  if (
+    user.role !== "operator" &&
+    user.role !== "publisher" &&
+    user.role !== "admin" &&
+    user.role !== "superadmin"
+  ) {
+    throw new ErrorMsg("Танд нэвтрэх эрх байхгүй байна", 401);
+  }
   res.status(200).json({
     success: true,
     message: "Амжилттай",
   });
 });
 
-exports.loginUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+exports.emailVerify = asyncHandler(async (req, res) => {
+  const decryptUserId = (encrypted) => {
+    var decipher = crypto.createDecipher(
+      process.env.EN_ALGORITHM,
+      process.env.EN_PASSWORD
+    );
+    var dec = decipher.update(encrypted, "hex", "utf8");
+    dec += decipher.final("utf8");
+    return dec;
+  };
 
-  if (!email || !password) {
-    throw new ErrorMsg("Талбарыг гүйцэт бөглөнө үү!", 401);
-  }
+  const uId = decryptUserId(req.params.id);
 
-  const user = await req.db.user.findOne({ where: { email: email } });
+  const user = await req.db.user.findByPk(parseInt(uId));
 
   if (!user) {
-    throw new ErrorMsg("Таны email эсвэл нууц үг буруу байна!", 401);
+    throw new ErrorMsg("Хэрэглэгч олдсонгүй", 404);
   }
-
-  const checkPassword = await req.db.user.checkPassword(email, password);
-
-  if (!checkPassword) {
-    throw new ErrorMsg("Таны email эсвэл нууц үг буруу байна!", 401);
-  }
-  const userId = user.userId;
-  const emailVerified = user.emailVerified;
-  if (user.emailVerified == "false") {
-    res.status(200).json({
-      success: true,
-      message: "Email-ээ баталгаажуулна уу!",
-      emailVerified: false,
-      userId,
-      emailVerified,
-    });
-  } else {
-    const token = jwt.sign(
-      { id: user.userId, role: user.role },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: process.env.JWT_EXPIRESIN,
-      }
-    );
-    res.status(200).json({
-      success: true,
-      message: "Амжилттай нэвтэрлээ!",
-      token,
-      user,
-    });
-  }
-});
-
-exports.emailVerify = asyncHandler(async (req, res) => {
-  const user = await req.db.user.findByPk(req.params.id);
 
   const { verificationCode } = req.body;
 
   if (!verificationCode) {
-    throw new ErrorMsg("Баталгаауулах код оруулна уу", 400);
+    throw new ErrorMsg("Баталгаажуулах код хүчингүй байна", 400);
   }
-
+  console.log(verificationCode);
+  console.log(user.emailVerificationCode);
   if (verificationCode !== user.emailVerificationCode) {
-    throw new ErrorMsg("Баталгаажуулах код буруу байна!", 400);
+    throw new ErrorMsg("Баталгаажуулах код хүчингүй байна!", 400);
   }
 
   if (Date.parse(user.emailVerificationCodeExpire) < Date.now()) {
@@ -241,7 +222,7 @@ exports.emailVerify = asyncHandler(async (req, res) => {
       emailVerificationCode: null,
       emailVerificationCodeExpire: null,
     });
-    throw new ErrorMsg("Баталгаажуулах кодны хугацаа дууссан байна!", 400);
+    throw new ErrorMsg("Баталгаажуулах хугацаа дууссан байна!", 400);
   }
 
   await user.update({
@@ -259,7 +240,7 @@ exports.emailVerify = asyncHandler(async (req, res) => {
   );
   res.status(200).json({
     success: true,
-    message: "Амжилттай нэвтэрлээ",
+    message: "Амжилттай баталгаажууллаа",
     token,
     user,
   });
@@ -268,12 +249,24 @@ exports.emailVerify = asyncHandler(async (req, res) => {
 // Шинээр баталгаажуулах код авах /JSON дотроос User Устгах/
 
 exports.reSendEmailVerification = asyncHandler(async (req, res) => {
-  const user = await req.db.user.findByPk(req.params.id);
+  const decryptUserId = (encrypted) => {
+    var decipher = crypto.createDecipher(
+      process.env.EN_ALGORITHM,
+      process.env.EN_PASSWORD
+    );
+    var dec = decipher.update(encrypted, "hex", "utf8");
+    dec += decipher.final("utf8");
+    return dec;
+  };
+
+  const uId = decryptUserId(req.params.id);
+
+  const user = await req.db.user.findByPk(parseInt(uId));
 
   if (!user) {
-    throw new ErrorMsg("Алдаа гарлаа!", 400);
+    throw new ErrorMsg("Хэрэглэгч олдсонгүй!", 404);
   }
-
+  console.log(user.emailVerificationCode);
   if (user.emailVerificationCode == "true") {
     throw new ErrorMsg(
       "Уучлаарай баталгаажсан email байна. Нэвтэрч ороод өөрчилнө үү!",
@@ -366,4 +359,74 @@ exports.updateLoginEmail = asyncHandler(async (req, res) => {
     message: "Амжилттай",
     user,
   });
+});
+
+exports.loginUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    throw new ErrorMsg("Талбарыг гүйцэт бөглөнө үү!", 401);
+  }
+
+  const user = await req.db.user.findOne({ where: { email: email } });
+
+  if (!user) {
+    throw new ErrorMsg("Таны email эсвэл нууц үг буруу байна!", 401);
+  }
+
+  const checkPassword = await req.db.user.checkPassword(email, password);
+
+  if (!checkPassword) {
+    throw new ErrorMsg("Таны email эсвэл нууц үг буруу байна!", 401);
+  }
+
+  const encryptUserId = (userId) => {
+    var cipher = crypto.createCipher(
+      process.env.EN_ALGORITHM,
+      process.env.EN_PASSWORD
+    );
+    var crypted = cipher.update(userId, "utf8", "hex");
+    crypted += cipher.final("hex");
+    return crypted;
+  };
+
+  const tkpassword = "?,-FzZUgZ5<[`~+U";
+
+  const encryptToken = (userId) => {
+    var cipher = crypto.createCipher(process.env.EN_ALGORITHM, tkpassword);
+    var crypted = cipher.update(userId, "utf8", "hex");
+    crypted += cipher.final("hex");
+    return crypted;
+  };
+
+  const emailVerified = user.emailVerified;
+
+  const _cu = encryptUserId(`${user.userId}`);
+  const _cr = encryptUserId(`${user.role}`);
+
+  const _tu = encryptToken(`${user.userId}`);
+  const _tr = encryptToken(`${user.role}`);
+
+  const token = jwt.sign({ _tu: _tu, _tr: _tr }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRESIN,
+  });
+  if (user.emailVerified == "false") {
+    res.status(200).json({
+      success: true,
+      message: "Email-ээ баталгаажуулна уу!",
+      emailVerified,
+      AUTHtoken: token,
+      _cu,
+      _cr,
+    });
+  } else {
+    res.status(200).json({
+      success: true,
+      message: "Амжилттай нэвтэрлээ!",
+      emailVerified,
+      AUTHtoken: token,
+      _cu,
+      _cr,
+    });
+  }
 });

@@ -36,7 +36,7 @@ var whitelist = [
 
 var corsOptions = {
   origin: function (origin, callback) {
-    console.log(origin);
+    // console.log(origin);
     if (origin === undefined || whitelist.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
@@ -182,6 +182,7 @@ db.khoroo.belongsTo(db.district, {
   onDelete: "cascade",
   onUpdate: "cascade",
 });
+
 db.district.hasMany(db.khoroo, {
   foreignKey: "districtId",
 });
@@ -237,7 +238,7 @@ db.mediaLibrary.belongsToMany(db.article, {
 db.sequelize
   .sync()
   .then((result) => {
-    console.log("");
+    console.log();
   })
   .catch((err) => console.log(err));
 

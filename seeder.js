@@ -107,6 +107,10 @@ const importData = async () => {
     for (var i = 0; i < user.length; i++) {
       await db.user.create(user[i]);
     }
+
+    for (var i = 0; i < user.length; i++) {
+      await db.userVerify.create(user[i]);
+    }
     // District
     for (var i = 0; i < district.length; i++) {
       await db.district.create(district[i]);
