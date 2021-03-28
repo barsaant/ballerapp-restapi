@@ -6,11 +6,9 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
 exports.registerUser = asyncHandler(async (req, res) => {
-  const { firstName, email, password } = req.body;
+  const { name, email, password } = req.body;
 
-  console.log(firstName);
-
-  if (!firstName && !email && !password) {
+  if (!name && !email && !password) {
     throw new ErrorMsg(`Талбарыг гүйцэт бөглөнө үү`, 400);
   }
 
@@ -28,7 +26,7 @@ exports.registerUser = asyncHandler(async (req, res) => {
   const encryptPassword = await bcrypt.hash(password, salt);
 
   const newUser = await req.db.user.create({
-    fistName: firstName,
+    name: name,
     email: email,
     password: password,
   });
@@ -61,11 +59,13 @@ exports.registerUser = asyncHandler(async (req, res) => {
   Баталгаажуулах код 10 минут хүчинтэй.
   `;
 
-  await sendEmail({
+  const mail = await sendEmail({
     email: email,
     subject: "[BALLER.MN] EMAIL БАТАЛГААЖУУЛАХ КОД",
     message,
   });
+
+  console.log(mail);
 
   res.status(200).json({
     success: true,

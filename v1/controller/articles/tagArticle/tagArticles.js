@@ -71,6 +71,9 @@ exports.getTagArticle = asyncHandler(async (req, res) => {
   let query = {
     offset: pagination.start - 1,
     limit,
+    where: {
+      status: "posted",
+    },
     include: [
       {
         model: db.tagArticle,
@@ -79,9 +82,9 @@ exports.getTagArticle = asyncHandler(async (req, res) => {
       },
     ],
   };
-  if (req.query) {
-    query.where = req.query;
-  }
+  // if (req.query) {
+  //   query.where = req.query;
+  // }
 
   if (select) {
     query.attributes = select;
