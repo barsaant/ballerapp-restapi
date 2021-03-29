@@ -11,9 +11,8 @@ exports.protect = asyncHandler(async (req, res, next) => {
 
   if (req.headers.authorization) {
     token = req.headers.authorization.split(" ")[1];
-    const { cid, cr } = req.body;
-    uid = cid;
-    ur = cr;
+    uid = req.headers.cid;
+    ur = req.headers.cr;
   } else if (req.cookies) {
     token = req.cookies["AUTHtoken"];
     uid = req.cookies["_cuid"];
