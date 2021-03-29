@@ -4,14 +4,14 @@ const ErrorMsg = require("../utils/ErrorMsg");
 const crypto = require("crypto");
 
 exports.protect = asyncHandler(async (req, res, next) => {
-  console.log(req.headers);
+  // console.log(req.headers);
   let token = null;
   let uid = null;
   let ur = null;
 
   if (req.headers.authorization) {
     token = req.headers.authorization.split(" ")[1];
-    const [cid, cr] = req.body;
+    const { cid, cr } = req.body;
     uid = cid;
     ur = cr;
   } else if (req.cookies) {
@@ -24,7 +24,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
   const _cuid = uid;
   const _cr = ur;
 
-  if (!authToken || !_cuid || !_cr) {
+  if (!authToken && !_cuid && !_cr) {
     throw new ErrorMsg("Та нэвтэрнэ үү!", 401);
   }
 
