@@ -22,12 +22,21 @@ module.exports = function (sequelize, DataTypes) {
       article: {
         type: DataTypes.TEXT,
         allowNull: true,
+        defaultValue: "<p></p>",
       },
-
       status: {
         type: DataTypes.ENUM("posted", "saved", "deleted"),
         allowNull: false,
         defaultValue: "saved",
+      },
+      views: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+      },
+      postedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
       },
       createdAt: {
         type: DataTypes.DATE,

@@ -15,6 +15,12 @@ const tagJson = {
       attributes: ["tagId", "tagName", "createdAt", "updatedAt"],
       through: { attributes: [] },
     },
+    {
+      model: db.user,
+      as: "publisher",
+      attributes: ["userId", "name", "createdAt", "updatedAt"],
+      through: { attributes: [] },
+    },
   ],
 };
 

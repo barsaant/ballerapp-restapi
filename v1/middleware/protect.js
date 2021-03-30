@@ -4,7 +4,7 @@ const ErrorMsg = require("../utils/ErrorMsg");
 const crypto = require("crypto");
 
 exports.protect = asyncHandler(async (req, res, next) => {
-  // console.log(req.headers);
+  console.log(req.headers);
   let token = null;
   let uid = null;
   let ur = null;

@@ -75,12 +75,14 @@ db.user.belongsToMany(db.sportHall, {
   through: db.rateSportHall,
   foreignKey: "userId",
   otherKey: "hallId",
+  as: "rate",
 });
 
 db.sportHall.belongsToMany(db.user, {
   through: db.rateSportHall,
   foreignKey: "hallId",
   otherKey: "userId",
+  as: "rate",
 });
 
 db.sportHall.belongsToMany(db.mediaLibrary, {
@@ -123,24 +125,28 @@ db.user.belongsToMany(db.sportHall, {
   through: db.operatorSportHall,
   foreignKey: "userId",
   otherKey: "hallId",
+  as: "operator",
 });
 
 db.sportHall.belongsToMany(db.user, {
   through: db.operatorSportHall,
   foreignKey: "hallId",
   otherKey: "userId",
+  as: "operator",
 });
 
 db.user.belongsToMany(db.orderSportHall, {
   through: db.orderOpSportHall,
   foreignKey: "userId",
   otherKey: "orderId",
+  as: "orderOp",
 });
 
 db.orderSportHall.belongsToMany(db.user, {
   through: db.orderOpSportHall,
   foreignKey: "orderId",
   otherKey: "userId",
+  as: "orderOp",
 });
 
 db.user.hasMany(db.userBankAccount, {
@@ -191,12 +197,28 @@ db.user.belongsToMany(db.article, {
   through: db.favoriteArticle,
   foreignKey: "userId",
   otherKey: "articleId",
+  as: "favorite",
 });
 
 db.article.belongsToMany(db.user, {
-  through: db.favoriteArticle,
+  through: db.articles_publisher,
   foreignKey: "articleId",
   otherKey: "userId",
+  as: "favorite",
+});
+
+db.user.belongsToMany(db.article, {
+  through: db.articles_publisher,
+  foreignKey: "userId",
+  otherKey: "articleId",
+  as: "publisher",
+});
+
+db.article.belongsToMany(db.user, {
+  through: db.articles_publisher,
+  foreignKey: "articleId",
+  otherKey: "userId",
+  as: "publisher",
 });
 
 db.article.belongsToMany(db.tagArticle, {
