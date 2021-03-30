@@ -1,7 +1,7 @@
 const asyncHandler = require("../../../middleware/asyncHandler");
-const tagArticle = require("../../../models/articles/tagArticle");
 const ErrorMsg = require("../../../utils/ErrorMsg");
 const paginate = require("../../../utils/paginate");
+const db = require("../../../../config/db-mysql");
 
 exports.getTagArticles = asyncHandler(async (req, res) => {
   const page = parseInt(req.query.page) || 1;
