@@ -118,7 +118,7 @@ exports.updateArticle = asyncHandler(async (req, res) => {
     throw new ErrorMsg(`${req.params.id} ID-тай нийтлэл олдсонгүй.`, 400);
   }
 
-  const { categoryId, tagId } = req.body;
+  const { categoryId, tagId, userId } = req.body;
 
   await req.db.articles_category.destroy({
     where: { articleId: req.params.id },
@@ -151,6 +151,25 @@ exports.updateArticle = asyncHandler(async (req, res) => {
       await req.db.articles_tag.create({
         articleId: req.params.id,
         tagId: tagId[i],
+      });
+    }
+  }
+
+  await req.db.articles_publisher.destroy({
+    where: { articleId: req.params.id },
+  });
+
+  if (userId) {
+    for (var i = 0; i < userId.length; i++) {
+      const userIdCheck = await req.db.user.findByPk(userId[i]);
+
+      if (!userIdCheck) {
+        throw new ErrorMsg(`${tagId} ID-тай хэрэглэгч байхгүй байна!`, 404);
+      }
+
+      await req.db.articles_publisher.create({
+        articleId: req.params.id,
+        userId: userId[i],
       });
     }
   }
@@ -191,6 +210,10 @@ exports.deleteArticle = asyncHandler(async (req, res) => {
     where: { articleId: req.params.id },
   });
   await req.db.articles_tag.destroy({ where: { articleId: req.params.id } });
+
+  await req.db.articles_publisher.destroy({
+    where: { articleId: req.params.id },
+  });
 
   await article.destroy();
 
