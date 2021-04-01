@@ -1,4 +1,5 @@
 const express = require("express");
+const { protect, authorize } = require("../../middleware/protect");
 
 const {
   getFavoriteArticles,
@@ -10,8 +11,8 @@ const router = express.Router();
 
 router
   .route("/")
-  .get(getFavoriteArticles)
-  .post(createFavoriteArticles)
-  .delete(deleteFavoriteArticle);
+  .get(protect, getFavoriteArticles)
+  .post(protect, createFavoriteArticles)
+  .delete(protect, deleteFavoriteArticle);
 
 module.exports = router;

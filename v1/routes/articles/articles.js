@@ -41,12 +41,12 @@ router
 
 router
   .route("/")
-  .get(getArticles)
+  .get(protect, authorize("admin", "superadmin"), getArticles)
   .post(protect, authorize("admin", "superadmin"), createArticle);
 
 router
   .route("/:id")
-  .get(protect, authorize("admin", "superadmin"), getArticle)
+  .get(protect, getArticle)
   .put(protect, authorize("admin", "superadmin"), updateArticle)
   .delete(protect, authorize("admin", "superadmin"), deleteArticle);
 

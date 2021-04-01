@@ -4,34 +4,13 @@ const paginate = require("../../../utils/paginate");
 const jwt = require("jsonwebtoken");
 
 exports.getFavoriteArticles = asyncHandler(async (req, res) => {
-  if (!req.headers.authorization) {
-    throw new ErrorMsg("Та эхлээд нэвтэрнэ үү!", 401);
-  }
+  const user = await req.db.user.findByPk(req.userId);
 
-  const tokenCheck = req.headers.authorization.split(" ")[1];
-
-  if (!tokenCheck) {
-    throw new ErrorMsg("Алдаа гарлаа. Та дахин нэвтэрнэ үү!", 401);
-  }
-
-  const check = jwt.verify(tokenCheck, process.env.JWT_SECRET);
-
-  const { userId } = req.body;
-
-  if (check.id != userId) {
-    throw new ErrorMsg("Алдаа гарлаа. Та дахин нэвтэрнэ үү!", 401);
-  }
-
-  if (!userId) {
-    throw new ErrorMsg("Талбарыг гүйцэт бөглөнө үү", 400);
-  }
-
-  const user = await req.db.user.findByPk(userId);
+  console.log(user);
 
   if (!user) {
-    throw new ErrorMsg(`${userId} ID-тай хэрэглэгч олдсонгүй`, 404);
+    throw new ErrorMsg(`${req.userId} ID-тай хэрэглэгч олдсонгүй`, 404);
   }
-
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const sort = req.query.sort;
@@ -42,7 +21,7 @@ exports.getFavoriteArticles = asyncHandler(async (req, res) => {
 
   ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
 
-  const pagination = await paginate(page, limit, req.db.khoroo);
+  const pagination = await paginate(page, limit, req.db.article);
 
   let query = {
     offset: pagination.start - 1,
@@ -65,7 +44,7 @@ exports.getFavoriteArticles = asyncHandler(async (req, res) => {
       ]);
   }
 
-  const allFavoriteArticles = await user.getArticles();
+  const allFavoriteArticles = await user.getFavorite();
   let count;
   let pages;
   for (var i = 0; i < allFavoriteArticles.length; i++) {
@@ -73,45 +52,27 @@ exports.getFavoriteArticles = asyncHandler(async (req, res) => {
     pages = Math.ceil((i + 1) / limit);
   }
 
-  const { firstName, lastName, email } = user;
-  const favoriteArticles = await user.getArticles(query);
+  const { userId } = user;
+
+  const favoriteArticles = await user.getFavorite(query);
 
   res.status(200).json({
     success: true,
     count,
     pages,
-    user: { userId, firstName, lastName, email, favoriteArticles },
+    user: { userId, favoriteArticles },
   });
 });
 
 exports.createFavoriteArticles = asyncHandler(async (req, res) => {
-  if (!req.headers.authorization) {
-    throw new ErrorMsg("Та эхлээд нэвтэрнэ үү!", 401);
+  const user = await req.db.user.findByPk(req.userId);
+
+  if (!user) {
+    throw new ErrorMsg(`Хэрэглэгч олдсонгүй`, 404);
   }
 
-  const tokenCheck = req.headers.authorization.split(" ")[1];
+  const { articleId } = req.body;
 
-  if (!tokenCheck) {
-    throw new ErrorMsg("Алдаа гарлаа. Та дахин нэвтэрнэ үү!", 401);
-  }
-
-  const check = jwt.verify(tokenCheck, process.env.JWT_SECRET);
-
-  const { userId, articleId } = req.body;
-
-  if (check.id != userId) {
-    throw new ErrorMsg("Алдаа гарлаа. Та дахин нэвтэрнэ үү!", 401);
-  }
-
-  if (!userId || !articleId) {
-    throw new ErrorMsg("Талбарыг гүйцэт бөглөнө үү", 400);
-  }
-
-  const userCheck = await req.db.user.findByPk(userId);
-
-  if (!userCheck) {
-    throw new ErrorMsg(`${userId} ID-тай хэрэглэгч байхгүй байна`, 404);
-  }
   const articleCheck = await req.db.article.findByPk(articleId);
 
   if (!articleCheck) {
@@ -120,20 +81,17 @@ exports.createFavoriteArticles = asyncHandler(async (req, res) => {
 
   const favoriteCheck = await req.db.favoriteArticle.findOne({
     where: {
-      userId: userId,
+      userId: user.userId,
       articleId: articleId,
     },
   });
 
   if (favoriteCheck) {
-    throw new ErrorMsg(
-      "Дуртай хэсэгт бүртгэгдсэн байна. Өөр заал бүртгүүлнэ үү!",
-      400
-    );
+    throw new ErrorMsg("Дуртай хэсэгт бүртгэгдсэн байна.", 400);
   }
 
   const favorite = await req.db.favoriteArticle.create({
-    userId: userId,
+    userId: user.userId,
     articleId: articleId,
   });
 
@@ -144,31 +102,22 @@ exports.createFavoriteArticles = asyncHandler(async (req, res) => {
 });
 
 exports.deleteFavoriteArticle = asyncHandler(async (req, res) => {
-  if (!req.headers.authorization) {
-    throw new ErrorMsg("Та эхлээд нэвтэрнэ үү!", 401);
+  const user = await req.db.user.findByPk(req.userId);
+
+  if (!user) {
+    throw new ErrorMsg(`Хэрэглэгч олдсонгүй`, 404);
   }
 
-  const tokenCheck = req.headers.authorization.split(" ")[1];
+  const { articleId } = req.body;
 
-  if (!tokenCheck) {
-    throw new ErrorMsg("Алдаа гарлаа. Та дахин нэвтэрнэ үү!", 401);
-  }
-
-  const check = jwt.verify(tokenCheck, process.env.JWT_SECRET);
-
-  const { userId, articleId } = req.body;
-
-  if (check.id != userId) {
-    throw new ErrorMsg("Алдаа гарлаа. Та дахин нэвтэрнэ үү!", 401);
-  }
-
-  if (!userId || !articleId) {
-    throw new ErrorMsg("Талбарыг гүйцэт бөглөнө үү", 400);
+  const articleCheck = await req.db.aritcicle(articleId);
+  if (!articleCheck) {
+    throw new ErrorMsg(`${articleId} ID-тай нийтлэл байхгүй байна`, 404);
   }
 
   const favoriteArticle = await req.db.favoriteArticles.findOne({
     where: {
-      userId: userId,
+      userId: user.userId,
       articleId: articleId,
     },
   });
